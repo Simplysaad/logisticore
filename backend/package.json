@@ -1,0 +1,19 @@
+{
+  "name": "logisticore",
+  "version": "1.0.0",
+  "description": "a saas platform for logistics companies",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplysaad/logisticore.git"
+  },
+  "author": "simplysaad",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simplysaad/logisticore/issues"
+  },
+  "homepage": "https://github.com/simplysaad/logisticore#readme"
+}
