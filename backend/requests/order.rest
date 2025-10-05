@@ -1,0 +1,40 @@
+@base_url = http://localhost:5000
+@orderId = 68e26609d409c0286dd8dfb1 
+
+POST {{base_url}}/orders
+Content-Type: application/json
+
+{
+    "receiver": {
+        "name": "John Doe",
+        "address": "123 Main St, City, Country",
+        "phoneNumber": "+1234567890",
+        "emailAddress": "john.doe@example.com"
+    },
+    "description": "pink bag",
+    "price": 2000
+}
+
+###
+
+GET {{base_url}}/orders?page=1&status=cancelled
+
+###
+
+GET {{base_url}}/orders/{{orderId}}
+
+###
+
+POST  {{base_url}}/orders/{{orderId}}
+Content-Type: application/json
+
+{
+    "status": "cancelled",
+    "description": "yellow bag",
+    "receiver": {
+        "name": "Jane Doe",
+        "address": "456 Another St, City, Country",
+        "emailAddress": "jane.doe@exam.com"
+    }
+
+}

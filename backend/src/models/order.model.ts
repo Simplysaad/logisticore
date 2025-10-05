@@ -1,29 +1,22 @@
 import { Document, ObjectId, Schema, model } from "mongoose";
-interface ICustomer {
+export interface ICustomer {
   name: string;
-  phone: string;
+  phoneNumber: string;
+  emailAddress: string;
   address: string;
 }
 interface IOrder extends Document {
   _id: ObjectId;
-  //   tenantId: ObjectId;
-  //   customerId: ObjectId;
-  //   merchantId: ObjectId; // If from e-commerce merchant
-
   sender: ICustomer;
   receiver: ICustomer;
-  pickupAddress: string;
-  deliveryAddress: string;
-  status: "pending" | "in_transit" | "delivered" | "cancelled";
-  assignedDriverId: ObjectId;
+  status: "pending" | "in_transit" | "delivered" | "cancelled" | "confirmed";
   price: number;
-  //   deliveryType: string;
+  description: string;
   createdAt: Date;
   updatedAt: Date;
   trackingHistory: [
     {
       status: string;
-      location: string;
       timestamp: Date;
     }
   ];
@@ -31,37 +24,63 @@ interface IOrder extends Document {
 
 const orderSchema = new Schema<IOrder>(
   {
-    //   tenantId: { type: Schema.Types.ObjectId, required: true, ref: "tenant" },
-    //   customerId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-    //   merchantId: { type: Schema.Types.ObjectId, ref: "User" },
-    // assignedDriverId: { type: Schema.Types.ObjectId, ref: "User" },
-    // pickupAddress: { type: String, required: true },
-    // deliveryAddress: { type: String, required: true },
     sender: {
       name: String,
-      phone: String,
-      address: String
+      phoneNumber: String,
+      emailAddress: String,
+      address: String,
     },
     receiver: {
       name: String,
-      phone: String,
-      address: String
+      phoneNumber: String,
+      emailAddress: String,
+      address: String,
     },
     status: {
       type: String,
-      enum: ["pending", "in_transit", "delivered", "cancelled"],
-      default: "pending"
+      enum: [
+        "pending",
+        "confirmed",
+        "in_transit",
+        "delivered",
+        "cancelled",
+        "confirmed",
+      ],
+      default: "pending",
     },
     trackingHistory: [
       {
         status: String,
-        location: String,
-        timestamp: Date
-      }
+        timestamp: Date,
+      },
     ],
-    price: { type: Number, required: true }
+    price: { type: Number, required: true },
+    description: { type: String },
   },
   { timestamps: true }
 );
+
+orderSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate() as any;
+  const query = this.getQuery() as any;
+
+  const doc = await this.model.findOne(query).exec();
+
+  const hasStatus = doc?.trackingHistory?.at(-1)?.status === update.status;
+
+  if (hasStatus) return next();
+
+  if (!hasStatus && update && typeof update === "object" && update.status) {
+    if (!update.$push) update.$push = {};
+
+    update.$push.trackingHistory = {
+      status: update.status,
+      timestamp: new Date(),
+    };
+  }
+
+  next();
+});
+
 const Order = model<IOrder>("Order", orderSchema);
 export { IOrder, Order };

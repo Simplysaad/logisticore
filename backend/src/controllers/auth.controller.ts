@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
-import  User  from "../models/user.model";
+import User from "../models/user.model";
 import generateOTP from "../utils/generateOtp.util";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+const { SECRET_KEY } = process.env;
 const JWT_EXPIRES_IN = "1h"; // token validity
 
 interface ILoginBody {
   phoneNumber: string;
   name?: string;
+  emailAddress: string;
 }
 
 interface IVerifyBody {
@@ -22,21 +23,21 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body)
-    const { phoneNumber, name } = req.body as ILoginBody;
-    const otp = generateOTP()
+    const { phoneNumber, name, emailAddress } = req.body as ILoginBody;
+    const otp = generateOTP();
 
     const currentUser = await User.findOneAndUpdate(
-      { phoneNumber },
+      { $or: [{ phoneNumber }, { emailAddress }] },
       {
         $setOnInsert: {
           phoneNumber,
-          name
+          name,
+          emailAddress,
         },
         $set: {
           otp,
-          otpExpiry: new Date(Date.now() + 5 * 60000)
-        } // OTP expires in 5 mins
+          otpExpiry: new Date(Date.now() + 5 * 60000),
+        },
       },
       { upsert: true, new: true }
     );
@@ -46,7 +47,7 @@ export const login = async (
     return res.status(200).json({
       success: true,
       message: "OTP sent to your phone number",
-      data: currentUser
+      data: currentUser,
     });
   } catch (err) {
     next(err);
@@ -76,25 +77,28 @@ export const verifyOtp = async (
       return res.status(401).json({ success: false, message: "OTP expired" });
     }
 
-    // OTP is valid, create JWT token
+    if (!SECRET_KEY) throw new Error("SECRET_KEY is not defined");
     const token = jwt.sign(
       { userId: currentUser._id, phoneNumber: currentUser.phoneNumber },
-      JWT_SECRET,
+      SECRET_KEY,
       { expiresIn: JWT_EXPIRES_IN }
     );
 
-    // Save token in HttpOnly cookie (secure flag true in production)
+    currentUser.otpExpiry = new Date();
+    await currentUser.save();
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000, // 1 hour
-      sameSite: "strict"
+      maxAge: 3600000,
+      // TODO: should be a longer time like a week
+      sameSite: "strict",
     });
 
     return res.status(200).json({
       success: true,
       message: "Authentication successful",
-      token // optional to return token also in JSON
+      token, // optional to return token also in JSON
     });
   } catch (err) {
     next(err);
