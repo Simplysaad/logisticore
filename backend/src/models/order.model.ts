@@ -9,8 +9,13 @@ interface IOrder extends Document {
   _id: ObjectId;
   sender: ICustomer;
   receiver: ICustomer;
+  companyId?: ObjectId;
   status: "pending" | "in_transit" | "delivered" | "cancelled" | "confirmed";
   price: number;
+  instructions?: String;
+  preference?: {
+    [key: string]: any;
+  };
   description: string;
   createdAt: Date;
   updatedAt: Date;
@@ -56,6 +61,9 @@ const orderSchema = new Schema<IOrder>(
     ],
     price: { type: Number, required: true },
     description: { type: String },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company" },
+    instructions: { type: String },
+    preference: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

@@ -5,21 +5,20 @@ import {
   trackOrder,
   updateOrder,
 } from "../controllers/order.controller";
-import authMiddleware from "../middlewares/auth.middleware";
 
 const orderRouter = Router();
 
 // Get all orders
-orderRouter.get("/", authMiddleware, getOrders);
+orderRouter.get("/", getOrders);
 
 // Create an order
-orderRouter.post("/", authMiddleware, createOrder);
+orderRouter.post("/", createOrder);
 
 // Track an order
 orderRouter.get("/:orderId", trackOrder);
 
 // update an order
-orderRouter.post("/:orderId/", authMiddleware, updateOrder);
+orderRouter.post("/:orderId/", updateOrder);
 
 // Review an Order
 

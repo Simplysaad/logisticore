@@ -4,6 +4,7 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 
 interface IOrderBody {
   sender: ICustomer;
+  instruction: string;
   receiver: ICustomer;
   description: string;
   price: number;
@@ -31,19 +32,26 @@ export const createOrder = async (
   next: NextFunction
 ) => {
   try {
-    const { receiver, description, price } = req.body as IOrderBody;
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized - user not logged in",
-      });
-    }
-    const sender = req.user;
+    const {
+      sender = req.user,
+      receiver,
+      description,
+      instruction,
+
+      price,
+    } = req.body as IOrderBody;
+    // if (!req.user) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "Unauthorized - user not logged in",
+    //   });
+    // }
 
     const newOrder = await Order.create({
       sender,
       receiver,
       description,
+      instruction,
       price,
     });
 
@@ -98,12 +106,12 @@ export const updateOrder = async (
 
     const currentUser = req.user;
 
-    if (!currentUser) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized - user not logged in",
-      });
-    }
+    // if (!currentUser) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "Unauthorized - user not logged in",
+    //   });
+    // }
 
     if (status) {
       const validStatuses = [
@@ -120,7 +128,7 @@ export const updateOrder = async (
         });
       }
 
-      switch (currentUser.role) {
+      switch (currentUser?.role) {
         case "admin":
           // Admin can update to any status
           break;
@@ -172,12 +180,12 @@ export const getOrders = async (
 ) => {
   try {
     const currentUser = req.user;
-    if (!currentUser) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized - user not logged in",
-      });
-    }
+    // if (!currentUser) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "Unauthorized - user not logged in",
+    //   });
+    // }
 
     const { page = 1, limit = 10, status, min_date, max_date } = req.query;
     const pageNumber = parseInt(page as string, 10);
@@ -186,8 +194,8 @@ export const getOrders = async (
 
     const filter: IFilter = {};
 
-    if (currentUser.role === "customer") {
-      filter["sender._id"] = currentUser._id;
+    if (currentUser?.role === "customer") {
+      filter["sender._id"] = currentUser?._id;
     }
 
     if (status) filter.status = status;
