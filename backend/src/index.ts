@@ -3,11 +3,10 @@ import "dotenv/config";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
-import connectDB from "./config/db";
+import connectDB from "./config/db.ts";
 
-import authRouter from "./routes/auth.route";
-import orderRouter from "./routes/order.route";
-import errorhandler from "./middlewares/error.middleware";
+import orderRouter from "./routes/order.route.ts";
+import errorhandler from "./middlewares/error.middleware.ts";
 
 // import MongoStore from "connect-mongo";
 // import Session from "express-session";
@@ -49,7 +48,6 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
 
-app.use("/auth", authRouter);
 app.use("/orders", orderRouter);
 
 app.use((req, res) => {

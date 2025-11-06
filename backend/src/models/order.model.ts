@@ -5,7 +5,7 @@ export interface ICustomer {
   emailAddress: string;
   address: string;
 }
-interface IOrder extends Document {
+export interface IOrder extends Document {
   sender: ICustomer;
   receiver: ICustomer;
   companyId?: ObjectId;
@@ -92,4 +92,4 @@ orderSchema.pre("findOneAndUpdate", async function (next) {
 });
 
 const Order = model<IOrder>("Order", orderSchema);
-export { IOrder, Order };
+export default Order;

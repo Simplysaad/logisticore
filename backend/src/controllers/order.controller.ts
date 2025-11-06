@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ICustomer } from "../models/order.model";
+import { ICustomer } from "../models/order.model.ts";
 import { ObjectId } from "mongoose";
 
 interface IOrderBody {
