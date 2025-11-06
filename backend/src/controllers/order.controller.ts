@@ -1,19 +1,91 @@
 import { NextFunction, Request, Response } from "express";
-import { ICustomer } from "../models/order.model.ts";
-import { ObjectId } from "mongoose";
+import { ICustomer, Order } from "../models/order.model";
+import { isValidObjectId, ObjectId } from "mongoose";
+import Company, { ICompany } from "../models/company.model";
+import calculatePrice from "../services/price.service";
 
 interface IOrderBody {
   sender: ICustomer;
-  reciever: ICustomer;
+  receiver: ICustomer;
   description: string;
   instructions: string;
   companyId: ObjectId;
+  weight: number;
+  distance: number;
 }
 
-export function createOrder(req: Request, res: Response, next: NextFunction) {
+/**
+ * Create a new order
+ * recieves all the information about the order from req.body
+ * and creates a new order in the database
+ */
+export async function createOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { sender, reciever, description, instructions, companyId } =
+    const { sender, receiver, description, instructions, weight, distance } =
       req.body as IOrderBody;
+
+    const newOrder = await Order.create({
+      sender,
+      receiver,
+      description,
+      instructions,
+      weight,
+      distance,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Order created successfully",
+      data: { newOrder },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+export async function getOrderDetails(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { orderId } = req.params;
+
+    if (!isValidObjectId(orderId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Order ID" });
+    }
+
+    const currentOrder = await Order.findById(orderId).select(
+      "weight distance createdAt"
+    );
+    if (!currentOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    const companies = await Company.find().select("_id pricingRule name");
+
+    const calculatedPrices = companies.map(({ _id, pricingRule, name }) => {
+      const price = calculatePrice(currentOrder, pricingRule);
+      return { _id, name, price };
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Order retrieved successfully",
+      data: {
+        distance: `${currentOrder.distance} km`,
+        weight: `${currentOrder.weight} kg`,
+        date: currentOrder.createdAt.toLocaleString(),
+        prices: calculatedPrices,
+      },
+    });
   } catch (err) {
     next(err);
   }

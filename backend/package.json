@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Express backend setup with TypeScript",
   "main": "dist/server.ts",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",

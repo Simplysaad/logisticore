@@ -3,10 +3,10 @@ import "dotenv/config";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
-import connectDB from "./config/db.ts";
+import connectDB from "./config/db";
 
-import orderRouter from "./routes/order.route.ts";
-import errorhandler from "./middlewares/error.middleware.ts";
+import orderRouter from "./routes/order.route";
+import errorhandler from "./middlewares/error.middleware";
 
 // import MongoStore from "connect-mongo";
 // import Session from "express-session";

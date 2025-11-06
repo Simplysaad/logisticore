@@ -5,7 +5,7 @@ export interface ICustomer {
   emailAddress: string;
   address: string;
 }
-export interface IOrder extends Document {
+interface IOrder extends Document {
   sender: ICustomer;
   receiver: ICustomer;
   companyId?: ObjectId;
@@ -31,16 +31,16 @@ export interface IOrder extends Document {
 const orderSchema = new Schema<IOrder>(
   {
     sender: {
-      name: String,
-      phoneNumber: String,
-      emailAddress: String,
-      address: String,
+      name: { type: String, required: true },
+      phoneNumber: { type: String, required: true },
+      emailAddress: { type: String, required: true },
+      address: { type: String, required: true },
     },
     receiver: {
-      name: String,
-      phoneNumber: String,
-      emailAddress: String,
-      address: String,
+      name: { type: String, required: true },
+      phoneNumber: { type: String, required: true },
+      emailAddress: { type: String, required: true },
+      address: { type: String, required: true },
     },
     status: {
       type: String,
@@ -60,7 +60,9 @@ const orderSchema = new Schema<IOrder>(
         timestamp: Date,
       },
     ],
-    price: { type: Number, required: true },
+    weight: { type: Number },
+    distance: { type: Number },
+    price: { type: Number },
     description: { type: String },
     companyId: { type: Schema.Types.ObjectId, ref: "Company" },
     instructions: { type: String },
@@ -92,4 +94,4 @@ orderSchema.pre("findOneAndUpdate", async function (next) {
 });
 
 const Order = model<IOrder>("Order", orderSchema);
-export default Order;
+export { IOrder, Order };

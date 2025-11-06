@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { createOrder } from "../controllers/order.controller.ts";
+import { createOrder, getOrderDetails } from "../controllers/order.controller";
 
 const orderRouter = Router();
 
 // Create an order
 orderRouter.post("/", createOrder);
+
+orderRouter.get("/:orderId", getOrderDetails);
 
 export default orderRouter;

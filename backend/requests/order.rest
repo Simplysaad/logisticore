@@ -1,13 +1,13 @@
 @base_url = http://localhost:5000
-@orderId = 690a65cf6f40ca1b3d8dfe69 
+@orderId = 690d075aeb8b074250779809 
 
 POST {{base_url}}/orders
 Content-Type: application/json
 
-{
+{ 
     "sender": {
         "name": "Jane Doe",
-        "address": "123 SECondary St, City, Country",
+        "address": "123 Secondary St, City, Country",
         "phoneNumber": "+1234567890",
         "emailAddress": "jane.doe@example.com"
     },
@@ -17,30 +17,11 @@ Content-Type: application/json
         "phoneNumber": "+1234567890",
         "emailAddress": "john.doe@example.com"
     },
+    "weight": 20,
+    "distance": 45,
     "description": "pink bag",
     "price": 2000
 }
 
 ###
-
-GET {{base_url}}/orders?page=1&
-
-###
-
 GET {{base_url}}/orders/{{orderId}}
-
-###
-
-POST  {{base_url}}/orders/{{orderId}}
-Content-Type: application/json
-
-{
-    "status": "cancelled",
-    "description": "yellow bag",
-    "receiver": {
-        "name": "Jane Doe",
-        "address": "456 Another St, City, Country",
-        "emailAddress": "jane.doe@exam.com"
-    }
-
-}
