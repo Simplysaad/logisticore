@@ -6,12 +6,13 @@ export interface ICustomer {
   address: string;
 }
 interface IOrder extends Document {
-  _id: ObjectId;
   sender: ICustomer;
   receiver: ICustomer;
   companyId?: ObjectId;
   status: "pending" | "in_transit" | "delivered" | "cancelled" | "confirmed";
   price: number;
+  weight: number;
+  distance: number;
   instructions?: String;
   preference?: {
     [key: string]: any;
