@@ -1,5 +1,6 @@
 @base_url = http://localhost:5000
 @orderId = 690d075aeb8b074250779809 
+@companyId = 690d05db3d65bcadaaa0a187
 
 POST {{base_url}}/orders
 Content-Type: application/json
@@ -25,3 +26,10 @@ Content-Type: application/json
 
 ###
 GET {{base_url}}/orders/{{orderId}}
+###
+POST {{base_url}}/orders/{{orderId}}/confirm
+Content-Type: application/json
+
+{
+    "companyId": "{{companyId}}"
+}

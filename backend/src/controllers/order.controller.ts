@@ -90,3 +90,58 @@ export async function getOrderDetails(
     next(err);
   }
 }
+export async function confirmOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { orderId } = req.params;
+    const { companyId } = req.body as { companyId: string };
+
+    if (!isValidObjectId(orderId) || !isValidObjectId(companyId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Order ID or Company ID" });
+    }
+
+    const [currentOrder, selectedCompany] = await Promise.all([
+      Order.findById(orderId).select("_id weight distance createdAt"),
+      Company.findById(companyId).select("_id pricingRule name"),
+    ]);
+
+    if (!currentOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+    if (!selectedCompany) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Company not found" });
+    }
+
+    const finalPrice = calculatePrice(
+      currentOrder,
+      selectedCompany.pricingRule
+    );
+
+    await Order.updateOne(
+      { _id: orderId },
+      { $set: { companyId: selectedCompany._id, price: finalPrice } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Company selected successfully",
+      data: {
+        orderId: currentOrder._id,
+        companyId: selectedCompany._id,
+        companyName: selectedCompany.name,
+        finalPrice,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}

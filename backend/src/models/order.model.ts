@@ -6,10 +6,17 @@ export interface ICustomer {
   address: string;
 }
 interface IOrder extends Document {
+  _id: ObjectId;
   sender: ICustomer;
   receiver: ICustomer;
   companyId?: ObjectId;
-  status: "pending" | "in_transit" | "delivered" | "cancelled" | "confirmed";
+  status:
+    | "initialized"
+    | "confirmed "
+    | "in_transit"
+    | "delivered"
+    | "cancelled"
+    | "failed";
   price: number;
   weight: number;
   distance: number;
@@ -45,14 +52,14 @@ const orderSchema = new Schema<IOrder>(
     status: {
       type: String,
       enum: [
-        "pending",
+        "initialized",
         "confirmed",
         "in_transit",
         "delivered",
         "cancelled",
-        "confirmed",
+        "failed",
       ],
-      default: "pending",
+      default: "initialized",
     },
     trackingHistory: [
       {
