@@ -3,6 +3,7 @@ import { ICustomer, Order } from "../models/order.model";
 import { isValidObjectId, ObjectId } from "mongoose";
 import Company, { ICompany } from "../models/company.model";
 import calculatePrice from "../services/price.service";
+import { initialize } from "../services/paystack.service";
 
 interface IOrderBody {
   sender: ICustomer;
@@ -97,7 +98,10 @@ export async function confirmOrder(
 ) {
   try {
     const { orderId } = req.params;
-    const { companyId } = req.body as { companyId: string };
+    const { companyId, paymentMethod } = req.body as {
+      companyId: string;
+      paymentMethod: "pay_now" | "pay_on_delivery";
+    };
 
     if (!isValidObjectId(orderId) || !isValidObjectId(companyId)) {
       return res
@@ -106,7 +110,7 @@ export async function confirmOrder(
     }
 
     const [currentOrder, selectedCompany] = await Promise.all([
-      Order.findById(orderId).select("_id weight distance createdAt"),
+      Order.findById(orderId).select("_id weight distance createdAt sender"),
       Company.findById(companyId).select("_id pricingRule name"),
     ]);
 
@@ -126,15 +130,35 @@ export async function confirmOrder(
       selectedCompany.pricingRule
     );
 
+    let responseData;
+    if (paymentMethod === "pay_now") {
+      responseData = await initialize(
+        finalPrice,
+        currentOrder?.sender?.emailAddress,
+        orderId
+      );
+    } else {
+      responseData = {};
+    }
+
+    console.log(paymentMethod, responseData);
+
     await Order.updateOne(
       { _id: orderId },
-      { $set: { companyId: selectedCompany._id, price: finalPrice } }
+      {
+        $set: {
+          companyId: selectedCompany._id,
+          price: finalPrice,
+          "payment.method": paymentMethod,
+        },
+      }
     );
 
     return res.status(200).json({
       success: true,
       message: "Company selected successfully",
       data: {
+        ...responseData?.data,
         orderId: currentOrder._id,
         companyId: selectedCompany._id,
         companyName: selectedCompany.name,

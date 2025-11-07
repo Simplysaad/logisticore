@@ -2,6 +2,8 @@
 @orderId = 690d075aeb8b074250779809 
 @companyId = 690d05db3d65bcadaaa0a187
 
+
+# Initialize Order
 POST {{base_url}}/orders
 Content-Type: application/json
 
@@ -26,10 +28,22 @@ Content-Type: application/json
 
 ###
 GET {{base_url}}/orders/{{orderId}}
-###
+
+
+### # confirm Order 
 POST {{base_url}}/orders/{{orderId}}/confirm
 Content-Type: application/json
 
 {
-    "companyId": "{{companyId}}"
+    "companyId": "{{companyId}}",
+    "paymentMethod": "pay_now"
+    
 }
+
+
+
+# make Payments
+# track order 
+# confirm delivery
+# review company 
+

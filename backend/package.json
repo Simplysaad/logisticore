@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/simplysaad/logisticore#readme",
   "dependencies": {
+    "@paystack/paystack-sdk": "^1.0.1",
+    "@roarexclamation/paystack-ts-sdk": "^2.1.1",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^1.41.3",
