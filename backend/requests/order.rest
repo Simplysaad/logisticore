@@ -26,7 +26,7 @@ Content-Type: application/json
     "price": 2000
 }
 
-###
+### 
 GET {{base_url}}/orders/{{orderId}}
 
 
@@ -37,13 +37,15 @@ Content-Type: application/json
 {
     "companyId": "{{companyId}}",
     "paymentMethod": "pay_now"
-    
 }
 
 
 
 # make Payments
+###
 # track order 
+GET {{base_url}}/orders/{{orderId}}
+
 # confirm delivery
 # review company 
 

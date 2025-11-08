@@ -20,7 +20,7 @@ export async function initialize(
     transactionInitialize: {
       amount,
       email,
-      callbackUrl: `${process.env.BACKEND_URL}/orders/callback?orderId=${orderId}`,
+      callbackUrl: `${process.env.BASE_URL}/orders/${orderId}/callback`,
     },
   });
 

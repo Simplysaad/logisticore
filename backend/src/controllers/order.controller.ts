@@ -3,7 +3,7 @@ import { ICustomer, Order } from "../models/order.model";
 import { isValidObjectId, ObjectId } from "mongoose";
 import Company, { ICompany } from "../models/company.model";
 import calculatePrice from "../services/price.service";
-import { initialize } from "../services/paystack.service";
+import { initialize, verify } from "../services/paystack.service";
 
 interface IOrderBody {
   sender: ICustomer;
@@ -91,6 +91,7 @@ export async function getOrderDetails(
     next(err);
   }
 }
+
 export async function confirmOrder(
   req: Request,
   res: Response,
@@ -98,7 +99,7 @@ export async function confirmOrder(
 ) {
   try {
     const { orderId } = req.params;
-    const { companyId, paymentMethod } = req.body as {
+    const { companyId, paymentMethod = "pay_now" } = req.body as {
       companyId: string;
       paymentMethod: "pay_now" | "pay_on_delivery";
     };
@@ -133,7 +134,7 @@ export async function confirmOrder(
     let responseData;
     if (paymentMethod === "pay_now") {
       responseData = await initialize(
-        finalPrice,
+        finalPrice * 100,
         currentOrder?.sender?.emailAddress,
         orderId
       );
@@ -150,6 +151,7 @@ export async function confirmOrder(
           companyId: selectedCompany._id,
           price: finalPrice,
           "payment.method": paymentMethod,
+          status: "confirmed",
         },
       }
     );
@@ -164,6 +166,87 @@ export async function confirmOrder(
         companyName: selectedCompany.name,
         finalPrice,
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function orderCallback(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { reference, deliveryStatus: status } = req.query;
+    const { orderId } = req.params;
+
+    const response = await verify(reference as string);
+
+    if (!response) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment verification failed",
+      });
+    }
+
+    if (response.status && response.data.status === "success") {
+      await Order.updateOne(
+        { _id: orderId },
+        {
+          $set: {
+            payment: {
+              status: "success",
+              date: new Date(),
+              transactionId: response.data.reference,
+              amount: response.data.amount / 100,
+            },
+            status,
+          },
+        }
+      );
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment verification processed",
+      data: response.data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function trackOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Order ID is required",
+      });
+    }
+
+    const currentOrder = await Order.findById(orderId).select(
+      "_id trackingHistory"
+    );
+
+    if (!currentOrder) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order tracking data retrieved successfully",
+      data: currentOrder,
     });
   } catch (err) {
     next(err);

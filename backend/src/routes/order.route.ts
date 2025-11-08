@@ -3,6 +3,8 @@ import {
   confirmOrder,
   createOrder,
   getOrderDetails,
+  orderCallback,
+  trackOrder,
 } from "../controllers/order.controller";
 
 const orderRouter = Router();
@@ -12,5 +14,8 @@ orderRouter.post("/", createOrder);
 
 orderRouter.get("/:orderId", getOrderDetails);
 orderRouter.post("/:orderId/confirm", confirmOrder);
+orderRouter.post("/:orderId/track", trackOrder);
+
+orderRouter.get("/:orderId/callback", orderCallback);
 
 export default orderRouter;
