@@ -29,7 +29,16 @@ export async function createOrder(
     const { sender, receiver, description, instructions, weight, distance } =
       req.body as IOrderBody;
 
-    const newOrder = await Order.create({
+    // const newOrder = await Order.create({
+    //   sender,
+    //   receiver,
+    //   description,
+    //   instructions,
+    //   weight,
+    //   distance,
+    // });
+
+    const newOrder = new Order({
       sender,
       receiver,
       description,
@@ -37,6 +46,8 @@ export async function createOrder(
       weight,
       distance,
     });
+
+    await newOrder.save();
 
     return res.status(201).json({
       success: true,

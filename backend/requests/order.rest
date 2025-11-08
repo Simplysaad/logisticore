@@ -1,5 +1,5 @@
 @base_url = http://localhost:5000
-@orderId = 690d075aeb8b074250779809 
+@orderId = 690eac7e9c7c1b780899d173 
 @companyId = 690d05db3d65bcadaaa0a187
 
 
@@ -44,7 +44,7 @@ Content-Type: application/json
 # make Payments
 ###
 # track order 
-GET {{base_url}}/orders/{{orderId}}
+GET {{base_url}}/orders/{{orderId}}/track
 
 # confirm delivery
 # review company 
