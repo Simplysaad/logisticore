@@ -29,16 +29,7 @@ export async function createOrder(
     const { sender, receiver, description, instructions, weight, distance } =
       req.body as IOrderBody;
 
-    // const newOrder = await Order.create({
-    //   sender,
-    //   receiver,
-    //   description,
-    //   instructions,
-    //   weight,
-    //   distance,
-    // });
-
-    const newOrder = new Order({
+    const newOrder = await Order.create({
       sender,
       receiver,
       description,
@@ -47,7 +38,16 @@ export async function createOrder(
       distance,
     });
 
-    await newOrder.save();
+    // const newOrder = new Order({
+    //   sender,
+    //   receiver,
+    //   description,
+    //   instructions,
+    //   weight,
+    //   distance,
+    // });
+
+    // await newOrder.save();
 
     return res.status(201).json({
       success: true,
@@ -121,10 +121,24 @@ export async function confirmOrder(
         .json({ success: false, message: "Invalid Order ID or Company ID" });
     }
 
-    const [currentOrder, selectedCompany] = await Promise.all([
-      Order.findById(orderId).select("_id weight distance createdAt sender"),
-      Company.findById(companyId).select("_id pricingRule name"),
-    ]);
+    // const [currentOrder, selectedCompany] = await Promise.all([
+    //   Order.findOne({ _id: orderId }).select(
+    //     "_id weight distance createdAt sender"
+    //   ),
+    //   Company.findOne({ _id: companyId }).select("_id pricingRule name"),
+    // ]);
+
+    const currentOrder = await Order.findOne({ _id: orderId });
+    // .select(
+    //   "_id weight distance createdAt sender"
+    // );
+    const selectedCompany = await Company.findOne({ _id: companyId });
+    // .select(
+    //   "_id pricingRule name"
+    // );
+
+    console.log(selectedCompany);
+    console.log(companyId);
 
     if (!currentOrder) {
       return res
@@ -146,7 +160,7 @@ export async function confirmOrder(
     if (paymentMethod === "pay_now") {
       responseData = await initialize(
         finalPrice * 100,
-        currentOrder?.sender?.emailAddress,
+        currentOrder?.sender?.email,
         orderId
       );
     } else {

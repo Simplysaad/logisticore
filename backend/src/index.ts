@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import connectDB from "./config/db";
 
@@ -15,6 +16,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(morgan("dev"));
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.FRONTEND_URL,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

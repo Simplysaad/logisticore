@@ -2,7 +2,7 @@ import { Document, ObjectId, Schema, model } from "mongoose";
 export interface ICustomer {
   name: string;
   phoneNumber: string;
-  emailAddress: string;
+  email: string;
   address: string;
 }
 interface IOrder extends Document {
@@ -47,13 +47,13 @@ const orderSchema = new Schema<IOrder>(
     sender: {
       name: { type: String, required: true },
       phoneNumber: { type: String, required: true },
-      emailAddress: { type: String, required: true },
+      email: { type: String, required: true },
       address: { type: String, required: true },
     },
     receiver: {
       name: { type: String, required: true },
       phoneNumber: { type: String, required: true },
-      emailAddress: { type: String, required: true },
+      email: { type: String, required: true },
       address: { type: String, required: true },
     },
     status: {

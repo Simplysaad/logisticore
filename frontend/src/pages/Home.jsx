@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import axiosInstance from "../utils/axios.util";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [orderInit, setOrderInit] = useState({
     sender: {
       name: "",
@@ -52,10 +55,14 @@ const Home = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("Order submitted:", orderInit);
+    const { data: response } = await axiosInstance.post("/orders/", orderInit);
+    if (response?.success) {
+      console.log("Order submitted:", response);
+      navigate(`/order/confirm?id=${response.data?._id}`);
+    }
+    return null;
   };
 
   return (
