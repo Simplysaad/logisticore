@@ -121,24 +121,12 @@ export async function confirmOrder(
         .json({ success: false, message: "Invalid Order ID or Company ID" });
     }
 
-    // const [currentOrder, selectedCompany] = await Promise.all([
-    //   Order.findOne({ _id: orderId }).select(
-    //     "_id weight distance createdAt sender"
-    //   ),
-    //   Company.findOne({ _id: companyId }).select("_id pricingRule name"),
-    // ]);
-
-    const currentOrder = await Order.findOne({ _id: orderId });
-    // .select(
-    //   "_id weight distance createdAt sender"
-    // );
-    const selectedCompany = await Company.findOne({ _id: companyId });
-    // .select(
-    //   "_id pricingRule name"
-    // );
-
-    console.log(selectedCompany);
-    console.log(companyId);
+    const [currentOrder, selectedCompany] = await Promise.all([
+      Order.findOne({ _id: orderId }).select(
+        "_id weight distance createdAt sender"
+      ),
+      Company.findOne({ _id: companyId }).select("_id pricingRule name"),
+    ]);
 
     if (!currentOrder) {
       return res

@@ -28,7 +28,7 @@ const OrderConfirm = () => {
       const { data: response } = await axiosInstance.post(
         `/orders/${orderId}/confirm`,
         {
-          companyId: id,
+          companyId,
           paymentMethod: "pay_now",
         }
       );
