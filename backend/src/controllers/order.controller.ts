@@ -72,31 +72,22 @@ export async function getOrderDetails(
         .json({ success: false, message: "Invalid Order ID" });
     }
 
-    const currentOrder = await Order.findById(orderId).select(
-      "weight distance createdAt"
-    );
+    const currentOrder = await Order.findById(orderId)
+      .populate({
+        path: "companyId",
+        select: "name _id",
+      })
+      .select("weight distance createdAt price companyId");
     if (!currentOrder) {
       return res
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
 
-    const companies = await Company.find().select("_id pricingRule name");
-
-    const calculatedPrices = companies.map(({ _id, pricingRule, name }) => {
-      const price = calculatePrice(currentOrder, pricingRule);
-      return { _id, name, price };
-    });
-
     return res.status(200).json({
       success: true,
       message: "Order retrieved successfully",
-      data: {
-        distance: `${currentOrder.distance} km`,
-        weight: `${currentOrder.weight} kg`,
-        date: currentOrder.createdAt.toLocaleString(),
-        prices: calculatedPrices,
-      },
+      data: currentOrder,
     });
   } catch (err) {
     next(err);
@@ -220,11 +211,15 @@ export async function orderCallback(
       );
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Payment verification processed",
-      data: response.data,
-    });
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Payment verification processed",
+    //   data: response.data,
+    // });
+
+    return res
+      .status(200)
+      .redirect(`${process.env.FRONTEND_URL}/orders/${orderId}/`);
   } catch (err) {
     next(err);
   }
