@@ -3,10 +3,10 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import "./index.css";
 
 const Home = lazy(() => import("./pages/Home"));
-const ConfirmOrder = lazy(() => import("./pages/ConfirmOrder"));
-const CreateOrder = lazy(() => import("./pages/CreateOrder"));
-const TrackOrder = lazy(() => import("./pages/TrackOrder"));
-const OrderDetails = lazy(() => import("./pages/OrderDetails"));
+const ConfirmOrder = lazy(() => import("./pages/customer/ConfirmOrder"));
+const CreateOrder = lazy(() => import("./pages/customer/CreateOrder"));
+const TrackOrder = lazy(() => import("./pages/customer/TrackOrder"));
+const OrderDetails = lazy(() => import("./pages/customer/OrderDetails"));
 
 const App = () => {
   return (

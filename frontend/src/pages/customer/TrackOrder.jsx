@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axiosInstance from "../utils/axios.util";
+import axiosInstance from "../../utils/axios.util";
 import Layout from "./Layout";
 
 const OrderTracking = () => {

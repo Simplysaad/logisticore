@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   confirmOrder,
   createOrder,
+  fetchPrices,
   getOrderDetails,
   orderCallback,
   trackOrder,
@@ -13,6 +14,7 @@ const orderRouter = Router();
 orderRouter.post("/", createOrder);
 
 orderRouter.get("/:orderId", getOrderDetails);
+orderRouter.get("/:orderId/prices", fetchPrices);
 orderRouter.post("/:orderId/confirm", confirmOrder);
 orderRouter.get("/:orderId/track", trackOrder);
 

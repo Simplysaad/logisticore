@@ -94,6 +94,44 @@ export async function getOrderDetails(
   }
 }
 
+export async function fetchPrices(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findOne({ _id: orderId });
+    // const allowesdStatuses = ["initialized", ""];
+    if (order?.status !== "initialized") {
+      return res.status(200).json({
+        success: false,
+        message: "order has been confirmed",
+      });
+    }
+    const companies = await Company.find().select("pricingRule name _id");
+
+    const prices = companies.map(({ pricingRule, _id, name }, idx) => {
+      return {
+        price: calculatePrice(order, pricingRule),
+        _id,
+        name,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "",
+      data: {
+        prices,
+        ...order?.toObject(),
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function confirmOrder(
   req: Request,
   res: Response,

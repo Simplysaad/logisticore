@@ -5,10 +5,8 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import splitQuery from "../utils/splitQuery";
-import axiosInstance from "../utils/axios.util";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import axiosInstance from "../../utils/axios.util";
+import Layout from "./Layout";
 
 const OrderConfirm = () => {
   const [prices, setPrices] = useState([]);
@@ -23,11 +21,15 @@ const OrderConfirm = () => {
     const fetchPrices = async () => {
       try {
         const { data: response } = await axiosInstance.get(
-          `/orders/${orderId}/`
+          `/orders/${orderId}/prices`
         );
         if (response?.success) {
           setPrices(response.data?.prices || []);
           console.log("Fetched prices:", response);
+        } else if (
+          response?.message?.toLowerCase() === "order has been confirmed"
+        ) {
+          navigate(`/orders/${orderId}/track`);
         } else {
           throw new Error(response?.message || "Failed to fetch prices");
         }
@@ -58,8 +60,7 @@ const OrderConfirm = () => {
   };
 
   return (
-    <>
-      <Header />
+    <Layout>
       <main className="container mx-auto px-4 py-8">
         <table className="min-w-full bg-white rounded shadow-md">
           <thead className="bg-green-500 text-white">
@@ -95,8 +96,7 @@ const OrderConfirm = () => {
           </tbody>
         </table>
       </main>
-      <Footer />
-    </>
+    </Layout>
   );
 };
 

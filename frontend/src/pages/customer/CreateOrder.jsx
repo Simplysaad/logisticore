@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axiosInstance from "../utils/axios.util";
+import axiosInstance from "../../utils/axios.util";
 import { useNavigate } from "react-router-dom";
 import {
   MapPin,
