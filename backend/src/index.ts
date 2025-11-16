@@ -56,6 +56,7 @@ app.listen(port, () => {
 });
 
 app.use("/orders", orderRouter);
+app.use("/companies", orderRouter);
 
 app.use((req, res) => {
   return res.status(404).json({

@@ -109,11 +109,11 @@ export async function fetchPrices(
         message: "order has been confirmed",
       });
     }
-    const companies = await Company.find().select("pricingRule name _id");
+    const companies = await Company.find().select("service name _id");
 
-    const prices = companies.map(({ pricingRule, _id, name }, idx) => {
+    const prices = companies.map(({ service, _id, name }, idx) => {
       return {
-        price: calculatePrice(order, pricingRule),
+        price: calculatePrice(order, service.pricingRule),
         _id,
         name,
       };
@@ -170,7 +170,7 @@ export async function confirmOrder(
 
     const finalPrice = calculatePrice(
       currentOrder,
-      selectedCompany.pricingRule
+      selectedCompany.service.pricingRule
     );
 
     let responseData;

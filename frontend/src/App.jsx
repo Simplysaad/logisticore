@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import "./index.css";
+import DeliveryCompanyOnboarding from "./pages/company/RegisterCompany";
 
 const Home = lazy(() => import("./pages/Home"));
 const ConfirmOrder = lazy(() => import("./pages/customer/ConfirmOrder"));
@@ -18,6 +19,11 @@ const App = () => {
           <Route path="/orders/:orderId/" element={<OrderDetails />} />
           <Route path="/orders/:orderId/confirm" element={<ConfirmOrder />} />
           <Route path="/orders/:orderId/track" element={<TrackOrder />} />
+
+          <Route
+            path="/companies/register"
+            element={<DeliveryCompanyOnboarding />}
+          />
         </Routes>
       </Suspense>
     </BrowserRouter>
