@@ -48,6 +48,8 @@ const DeliveryCompanyOnboarding = () => {
     username: ""
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,12 +58,16 @@ const DeliveryCompanyOnboarding = () => {
       service,
       bankDetails,
       pricingRule,
-      authentication: auth,
+      authentication: {
+        emailAddress: "saadidris23@gmail.com",
+        password: "saad1234"
+      },
       contact
     };
     console.log("Company data submitted:", company);
 
     try {
+      setIsLoading(true);
       const { data: response } = await axiosInstance.post(
         "/companies/create",
         company
@@ -70,6 +76,8 @@ const DeliveryCompanyOnboarding = () => {
       console.log(response);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
   const states = [
@@ -586,7 +594,10 @@ const DeliveryCompanyOnboarding = () => {
           </fieldset>
           <button
             type="submit"
-            className="bg-green-500 block text-white font-semibold px-8 py-2 rounded hover:bg-white hover:text-green-500 hover:"
+            disabled={isLoading}
+            className={`${
+              isLoading ? "bg-green-200 " : "bg-green-500"
+            }  block text-white font-semibold px-8 py-2 rounded hover:bg-white hover:text-green-500 hover:`}
           >
             Submit
           </button>

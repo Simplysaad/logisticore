@@ -7,6 +7,7 @@ import cors from "cors";
 import connectDB from "./config/db";
 
 import orderRouter from "./routes/order.route";
+import companyRouter from "./routes/company.route";
 import errorhandler from "./middlewares/error.middleware";
 
 // import MongoStore from "connect-mongo";
@@ -56,7 +57,7 @@ app.listen(port, () => {
 });
 
 app.use("/orders", orderRouter);
-app.use("/companies", orderRouter);
+app.use("/companies", companyRouter);
 
 app.use((req, res) => {
   return res.status(404).json({

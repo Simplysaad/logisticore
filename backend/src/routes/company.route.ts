@@ -32,3 +32,6 @@ companyRouter.post("/create", registerCompany);
 // companyRouter.get("/orders");
 // companyRouter.get("/orders/:id");
 // companyRouter.get("/orders/:id/status");
+
+
+export default companyRouter
