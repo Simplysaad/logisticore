@@ -20,7 +20,7 @@ export interface ICompany {
     website?: string;
     phoneNumber: string;
   };
-  bank: {
+  bankDetails: {
     bankName: string;
     accountNumber: string;
     accountName: string;
@@ -31,8 +31,8 @@ export interface ICompany {
     vehicleTypes: string[];
     logo?: string;
     rating: number;
-    pricingRule: IPricingRule;
   };
+  pricingRule: IPricingRule;
   authentication: {
     emailAddress: string;
     password: string;
@@ -45,8 +45,19 @@ export interface ICompany {
 
 const WeightSurchargeSchema = new Schema(
   {
-    maxWeight: { type: Number, required: true, min: 0 },
-    extraFee: { type: Number, required: true, min: 0 },
+    weightRange: {
+      type: String,
+      enum: [
+        "less than 5kg",
+        "5kg to 10kg",
+        "10kg to 15kg",
+        "15kg to 20kg",
+        "above 20kg"
+      ],
+      required: true,
+      min: 0
+    },
+    extraFee: { type: Number, required: true, min: 0 }
   },
   { _id: false }
 );
@@ -64,10 +75,10 @@ const PricingRuleSchema = new Schema<IPricingRule>(
           // Peak hours should be between 0 and 23 (24-hour format)
           return arr.every((h: number) => h >= 0 && h <= 23);
         },
-        message: "Peak hours must be between 0 and 23.",
+        message: "Peak hours must be between 0 and 23."
       },
-      default: [],
-    },
+      default: []
+    }
   },
   { _id: false }
 );
@@ -81,13 +92,13 @@ const CompanySchema = new Schema<ICompany>(
       address: { type: String, required: true, trim: true },
       name: { type: String, required: true, trim: true },
       website: { type: String, trim: true },
-      phoneNumber: { type: String, required: true, trim: true },
+      phoneNumber: { type: String, required: true, trim: true }
     },
 
-    bank: {
+    bankDetails: {
       bankName: { type: String, required: true, trim: true },
       accountNumber: { type: String, required: true, trim: true },
-      accountName: { type: String, required: true, trim: true },
+      accountName: { type: String, required: true, trim: true }
     },
 
     service: {
@@ -95,9 +106,9 @@ const CompanySchema = new Schema<ICompany>(
       deliveryTypes: { type: [String], required: true, default: [] },
       vehicleTypes: { type: [String], required: true, default: [] },
       logo: { type: String, trim: true },
-      rating: { type: Number, required: true, min: 0, max: 5 },
-      pricingRule: { type: PricingRuleSchema, required: true },
+      rating: { type: Number, required: true, min: 0, max: 5 }
     },
+    pricingRule: { type: PricingRuleSchema, required: true },
 
     authentication: {
       emailAddress: {
@@ -107,14 +118,14 @@ const CompanySchema = new Schema<ICompany>(
         trim: true,
         match: /^\S+@\S+\.\S+$/,
         unique: true,
-        index: true,
+        index: true
       },
       password: { type: String, required: true },
-      username: { type: String, required: true, unique: true, trim: true },
-    },
+      username: { type: String, required: true, unique: true, trim: true }
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 

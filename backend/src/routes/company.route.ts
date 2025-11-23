@@ -21,7 +21,7 @@ import { registerCompany } from "../controllers/company.controller";
 
 const companyRouter = Router();
 
-companyRouter.post("/register", registerCompany);
+companyRouter.post("/create", registerCompany);
 // companyRouter.post("/login");
 
 // companyRouter.get("/profile");
