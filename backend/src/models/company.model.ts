@@ -3,7 +3,7 @@ import { model, Schema } from "mongoose";
 export interface IPricingRule {
   base: number;
   weightSurcharge: {
-    maxWeight: number;
+    weightRange: string;
     extraFee: number;
   }[];
   perKmRate: number;
@@ -55,7 +55,6 @@ const WeightSurchargeSchema = new Schema(
         "above 20kg"
       ],
       required: true,
-      min: 0
     },
     extraFee: { type: Number, required: true, min: 0 }
   },

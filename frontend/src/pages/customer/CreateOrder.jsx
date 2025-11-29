@@ -7,7 +7,7 @@ import {
   Phone,
   Package,
   Ruler,
-  MessageCircle,
+  MessageCircle
 } from "lucide-react";
 import Layout from "./Layout";
 
@@ -18,18 +18,18 @@ const CreateOrder = () => {
       name: "",
       email: "",
       phoneNumber: "",
-      address: "",
+      address: ""
     },
     receiver: {
       name: "",
       email: "",
       phoneNumber: "",
-      address: "",
+      address: ""
     },
     description: "",
     instructions: "",
-    weight: 0,
-    distance: 0,
+    weight: "less than 5kg",
+    distance: 0
   });
 
   const handleSenderChange = (e) => {
@@ -38,8 +38,8 @@ const CreateOrder = () => {
       ...prev,
       sender: {
         ...prev.sender,
-        [name]: value,
-      },
+        [name]: value
+      }
     }));
   };
 
@@ -49,8 +49,8 @@ const CreateOrder = () => {
       ...prev,
       receiver: {
         ...prev.receiver,
-        [name]: value,
-      },
+        [name]: value
+      }
     }));
   };
 
@@ -58,9 +58,17 @@ const CreateOrder = () => {
     const { name, value } = e.target;
     setOrderInit((prev) => ({
       ...prev,
-      [name]: name === "weight" || name === "distance" ? Number(value) : value,
+      [name]: name === "weight" || name === "distance" ? Number(value) : value
     }));
   };
+
+  const weightSurchargeOptions = [
+    "less than 5kg",
+    "5kg to 10kg",
+    "10kg to 15kg",
+    "15kg to 20kg",
+    "above 20kg"
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -319,19 +327,28 @@ const CreateOrder = () => {
                   >
                     <span className="flex items-center">
                       <Package className="mr-2 text-green-500" size={16} />
-                      Weight (kg)
+                      Weight Range
                     </span>
                   </label>
-                  <input
-                    type="number"
+                  <select
+                    name=""
+                    id=""
+                    value={orderInit.weightRange}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  >
+                    {weightSurchargeOptions.map((option, idx) => (
+                      <option key={idx} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  {/* <input
+                    type="text"
                     id="weight"
                     name="weight"
-                    value={orderInit.weight}
-                    min="0"
-                    onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
+                  /> */}
                 </div>
                 <div>
                   <label

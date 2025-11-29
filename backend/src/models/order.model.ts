@@ -18,9 +18,9 @@ interface IOrder extends Document {
     | "cancelled"
     | "failed";
   price: number;
-  weight: number;
+  weight: string;
   distance: number;
-  instructions?: String;
+  instructions?: string;
   preference?: {
     [key: string]: any;
   };
@@ -83,8 +83,8 @@ const orderSchema = new Schema<IOrder>(
       },
       method: {
         type: String,
-        enum: ["on_delivery", "immediate"],
-        default: "immediate",
+        enum: ["pay_on_delivery", "pay_now"],
+        default: "pay_now",
       },
       date: Date,
       transactionId: String,
@@ -93,7 +93,7 @@ const orderSchema = new Schema<IOrder>(
         default: 0,
       },
     },
-    weight: { type: Number },
+    weight: { type: String },
     distance: { type: Number },
     price: { type: Number },
     description: { type: String },

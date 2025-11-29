@@ -7,11 +7,27 @@ function getPeakHour(orderTime: Date, peakHours: number[]) {
   return hour >= peakHours[0] && hour <= peakHours[1];
 }
 
-export default function calculatePrice(
-  // order: IOrder,
-  order: any,
-  pricingRule: IPricingRule
-) {
+const allowedWeightRanges = [
+  "less than 5kg",
+  "5kg to 10kg",
+  "10kg to 15kg",
+  "15kg to 20kg",
+  "above 20kg"
+];
+// const weightConditions = [
+//   {
+//     name: "less than 5kg",
+//     max: 5,
+//     min: 0
+//   },
+//   {
+//     name: "5kg to 10kg",
+//     max: 10,
+//     min:
+//   }
+// ];
+
+export default function calculatePrice(order: any, pricingRule: IPricingRule) {
   const { distance, weight, createdAt } = order;
   const { perKmRate, peakHoursSurcharge, peakHours, base, weightSurcharge } =
     pricingRule;
@@ -20,9 +36,12 @@ export default function calculatePrice(
   let price = base;
   price += distance * perKmRate;
 
+  if (!allowedWeightRanges.includes(weight)) {
+    throw new Error("invalid weight range");
+  }
+
   for (let bracket of weightSurcharge) {
-    // if the weight is greater than the max allowed weight
-    if (weight <= bracket.maxWeight) {
+    if (weight === bracket.weightRange) {
       price += bracket.extraFee;
       break;
     }
@@ -33,4 +52,3 @@ export default function calculatePrice(
   }
   return price;
 }
-// https://github.com/simplysaad/logisticore/blob/feature/new-ideas/backend/src/services/price.service.ts
