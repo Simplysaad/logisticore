@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import axiosInstance from "../../utils/axios.util";
 import Layout from "./Layout";
+import CompanyCard from "../../components/CompanyCard";
 
 const OrderConfirm = () => {
   const [prices, setPrices] = useState([]);
@@ -62,7 +63,11 @@ const OrderConfirm = () => {
   return (
     <Layout>
       <main className="container mx-auto px-4 py-8">
-        <table className="min-w-full bg-white rounded shadow-md">
+        <div className="grid gap-4 grid-rows-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
+          {prices.length !== 0 &&
+            prices.map((price, idx) => <CompanyCard  key={idx} />)}
+        </div>
+        {/* <table className="min-w-full bg-white rounded shadow-md">
           <thead className="bg-green-500 text-white">
             <tr>
               <th className="text-left py-3 px-4">Company Name</th>
@@ -94,7 +99,7 @@ const OrderConfirm = () => {
               </tr>
             )}
           </tbody>
-        </table>
+        </table> */}
       </main>
     </Layout>
   );
