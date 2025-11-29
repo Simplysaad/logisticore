@@ -1,215 +1,289 @@
 import { NextFunction, Request, Response } from "express";
 import { ICustomer, Order } from "../models/order.model";
-import { AuthRequest } from "../middlewares/auth.middleware";
+import { isValidObjectId, ObjectId } from "mongoose";
+import Company, { ICompany } from "../models/company.model";
+import calculatePrice from "../services/price.service";
+import { initialize, verify } from "../services/paystack.service";
 
 interface IOrderBody {
   sender: ICustomer;
   receiver: ICustomer;
   description: string;
-  price: number;
+  instructions: string;
+  companyId: ObjectId;
+  weight: number;
+  distance: number;
 }
 
-interface IUpdateBody {
-  status?: string;
-  description?: string;
-  price?: number;
-  receiver?: {
-    name?: string;
-    address?: string;
-    phoneNumber?: string;
-    emailAddress?: string;
-  };
-}
-
-interface IFilter {
-  [key: string]: any;
-}
-
-export const createOrder = async (
-  req: AuthRequest,
+/**
+ * Create a new order
+ * recieves all the information about the order from req.body
+ * and creates a new order in the database
+ */
+export async function createOrder(
+  req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    const { receiver, description, price } = req.body as IOrderBody;
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized - user not logged in",
-      });
-    }
-    const sender = req.user;
+    const { sender, receiver, description, instructions, weight, distance } =
+      req.body as IOrderBody;
 
     const newOrder = await Order.create({
       sender,
       receiver,
       description,
-      price,
+      instructions,
+      weight,
+      distance
     });
 
     return res.status(201).json({
       success: true,
-      message: "new Order Created",
-      data: newOrder,
+      message: "Order created successfully",
+      data: newOrder
     });
   } catch (err) {
     next(err);
   }
-};
-
-export const trackOrder = async (
+}
+export async function getOrderDetails(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
     const { orderId } = req.params;
 
-    const currentOrder = await Order.findById(orderId);
+    if (!isValidObjectId(orderId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Order ID" });
+    }
 
-    return res.json({
+    const currentOrder = await Order.findById(orderId)
+      .populate({
+        path: "companyId",
+        select: "name _id"
+      })
+      .select("weight distance createdAt price companyId");
+    if (!currentOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "order detailes retrieved successfully",
-      data: currentOrder,
+      message: "Order retrieved successfully",
+      data: currentOrder
     });
   } catch (err) {
     next(err);
   }
-};
+}
 
-export const updateOrder = async (
-  req: AuthRequest,
+export async function fetchPrices(
+  req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    console.log(req.body);
     const { orderId } = req.params;
-    const update = req.body as IUpdateBody;
+    const order = await Order.findOne({ _id: orderId });
+    // const allowesdStatuses = ["initialized", ""];
+    if (order?.status !== "initialized") {
+      return res.status(200).json({
+        success: false,
+        message: "order has been confirmed"
+      });
+    }
+    const companies = await Company.find().select("pricingRule name _id");
 
-    if (!update || Object.keys(update).length === 0) {
+    const prices = companies.map(({ pricingRule, _id, name }, idx) => {
+      return {
+        price: calculatePrice(order, pricingRule),
+        _id,
+        name
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "",
+      data: {
+        prices,
+        ...order?.toObject()
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function confirmOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { orderId } = req.params;
+    const { companyId, paymentMethod = "pay_now" } = req.body as {
+      companyId: string;
+      paymentMethod: "pay_now" | "pay_on_delivery";
+    };
+
+    if (!isValidObjectId(orderId) || !isValidObjectId(companyId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Order ID or Company ID" });
+    }
+
+    const [currentOrder, selectedCompany] = await Promise.all([
+      Order.findOne({ _id: orderId }).select(
+        "_id weight distance createdAt sender"
+      ),
+      Company.findOne({ _id: companyId }).select("_id pricingRule name")
+    ]);
+
+    if (!currentOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+    if (!selectedCompany) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Company not found" });
+    }
+
+    const finalPrice = calculatePrice(
+      currentOrder,
+      selectedCompany.pricingRule
+    );
+
+    let responseData;
+    if (paymentMethod === "pay_now") {
+      responseData = await initialize(
+        finalPrice * 100,
+        currentOrder?.sender?.email,
+        orderId
+      );
+    } else {
+      responseData = {};
+    }
+
+    console.log(paymentMethod, responseData);
+
+    await Order.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          companyId: selectedCompany._id,
+          price: finalPrice,
+          "payment.method": paymentMethod,
+          status: "confirmed"
+        }
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Company selected successfully",
+      data: {
+        ...responseData?.data,
+        orderId: currentOrder._id,
+        companyId: selectedCompany._id,
+        companyName: selectedCompany.name,
+        finalPrice
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function orderCallback(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { reference, deliveryStatus: status } = req.query;
+    const { orderId } = req.params;
+
+    const response = await verify(reference as string);
+
+    if (!response) {
       return res.status(400).json({
         success: false,
-        message: "Bad Request - no fields to update",
+        message: "Payment verification failed"
       });
     }
-
-    const { status } = update;
-
-    const currentUser = req.user;
-
-    if (!currentUser) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized - user not logged in",
-      });
+    console.log("paystack response", response);
+    if (response.status && response.data.status === "success") {
+      await Order.updateOne(
+        { _id: orderId },
+        {
+          $set: {
+            payment: {
+              status: "success",
+              date: new Date(),
+              transactionId: response.data.reference,
+              amount: response.data.amount / 100
+            },
+            status
+          }
+        }
+      );
     }
 
-    if (status) {
-      const validStatuses = [
-        "pending",
-        "in_transit",
-        "delivered",
-        "confirmed",
-        "cancelled",
-      ];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({
-          success: false,
-          message: "Bad Request - invalid status value",
-        });
-      }
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Payment verification processed",
+    //   data: response.data,
+    // });
 
-      switch (currentUser.role) {
-        case "admin":
-          // Admin can update to any status
-          break;
-        case "staff":
-          // Staff can only update to 'in_transit' or 'delivered'
-          if (status !== "in_transit" && status !== "delivered") {
-            return res.status(403).json({
-              success: false,
-              message: "Forbidden - insufficient permissions",
-            });
-          }
-          break;
-        case "customer":
-          // Customers can only update to 'confirmed'
-          if (status !== "confirmed") {
-            return res.status(403).json({
-              success: false,
-              message: "Forbidden - insufficient permissions",
-            });
-          }
-          break;
-        default:
-          return res.status(403).json({
-            success: false,
-            message: "Forbidden - insufficient permissions",
-          });
-      }
-    }
-
-    const updatedOrder = await Order.findOneAndUpdate(
-      { _id: orderId },
-      { ...update },
-      { new: true }
-    );
-    return res.status(200).json({
-      success: true,
-      message: "Order status updated successfully",
-      data: updatedOrder,
-    });
-  } catch (error) {
-    next(error);
+    return res
+      .status(200)
+      .redirect(`${process.env.FRONTEND_URL}/orders/${orderId}/`);
+  } catch (err) {
+    next(err);
   }
-};
+}
 
-export const getOrders = async (
-  req: AuthRequest,
+export async function trackOrder(
+  req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    const currentUser = req.user;
-    if (!currentUser) {
-      return res.status(401).json({
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({
         success: false,
-        message: "Unauthorized - user not logged in",
+        message: "Order ID is required"
       });
     }
 
-    const { page = 1, limit = 10, status, min_date, max_date } = req.query;
-    const pageNumber = parseInt(page as string, 10);
-    const limitNumber = parseInt(limit as string, 10);
-    const skip = (pageNumber - 1) * limitNumber;
+    const currentOrder = await Order.findById(orderId).select(
+      "_id trackingHistory"
+    );
 
-    const filter: IFilter = {};
-
-    if (currentUser.role === "customer") {
-      filter["sender._id"] = currentUser._id;
+    if (!currentOrder) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
     }
-
-    if (status) filter.status = status;
-
-    if (min_date || max_date) {
-      filter.createdAt = {};
-      if (min_date) {
-        filter.createdAt.$gte = new Date(min_date as string);
-      }
-      if (max_date) {
-        filter.createdAt.$lte = new Date(max_date as string);
-      }
-    }
-
-    let orders = await Order.find(filter).skip(skip).limit(limitNumber);
 
     return res.status(200).json({
       success: true,
-      message: "Orders retrieved successfully",
-      data: orders,
+      message: "Order tracking data retrieved successfully",
+      data: currentOrder
     });
   } catch (err) {
     next(err);
   }
-};
+}

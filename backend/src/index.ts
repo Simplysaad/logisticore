@@ -2,11 +2,12 @@ import express from "express";
 import "dotenv/config";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import connectDB from "./config/db";
 
-import authRouter from "./routes/auth.route";
 import orderRouter from "./routes/order.route";
+import companyRouter from "./routes/company.route";
 import errorhandler from "./middlewares/error.middleware";
 
 // import MongoStore from "connect-mongo";
@@ -16,6 +17,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(morgan("dev"));
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.FRONTEND_URL,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -49,8 +56,8 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
 
-app.use("/auth", authRouter);
 app.use("/orders", orderRouter);
+app.use("/companies", companyRouter);
 
 app.use((req, res) => {
   return res.status(404).json({

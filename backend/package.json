@@ -1,5 +1,5 @@
 {
-  "name": "iphivebackend",
+  "name": "logisticore",
   "version": "1.0.0",
   "description": "Express backend setup with TypeScript",
   "main": "dist/server.ts",
@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,13 +22,15 @@
   },
   "homepage": "https://github.com/simplysaad/logisticore#readme",
   "dependencies": {
+    "@paystack/paystack-sdk": "^1.0.1",
+    "@roarexclamation/paystack-ts-sdk": "^2.1.1",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^1.41.3",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "express-validator": "^7.2.1",
@@ -41,14 +44,17 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.17",
-    "@types/dotenv": "^8.2.0",
+    "@types/dotenv": "^8.2.3",
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.2",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^20.12.12",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.0"
   }

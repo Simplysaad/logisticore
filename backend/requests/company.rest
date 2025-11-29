@@ -1,0 +1,4 @@
+@base_url = http://localhost:5000
+
+GET {{base_url}}/api/status
+#   200 OK

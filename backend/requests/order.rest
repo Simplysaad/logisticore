@@ -1,40 +1,51 @@
 @base_url = http://localhost:5000
-@orderId = 68e26609d409c0286dd8dfb1 
+@orderId = 690eac7e9c7c1b780899d173 
+@companyId = 690d05db3d65bcadaaa0a187
 
+
+# Initialize Order
 POST {{base_url}}/orders
 Content-Type: application/json
 
-{
+{ 
+    "sender": {
+        "name": "Jane Doe",
+        "address": "123 Secondary St, City, Country",
+        "phoneNumber": "+1234567890",
+        "emailAddress": "jane.doe@example.com"
+    },
     "receiver": {
         "name": "John Doe",
         "address": "123 Main St, City, Country",
         "phoneNumber": "+1234567890",
         "emailAddress": "john.doe@example.com"
     },
+    "weight": 20,
+    "distance": 45,
     "description": "pink bag",
     "price": 2000
 }
 
-###
-
-GET {{base_url}}/orders?page=1&status=cancelled
-
-###
-
+### 
 GET {{base_url}}/orders/{{orderId}}
 
-###
 
-POST  {{base_url}}/orders/{{orderId}}
+### # confirm Order 
+POST {{base_url}}/orders/{{orderId}}/confirm
 Content-Type: application/json
 
 {
-    "status": "cancelled",
-    "description": "yellow bag",
-    "receiver": {
-        "name": "Jane Doe",
-        "address": "456 Another St, City, Country",
-        "emailAddress": "jane.doe@exam.com"
-    }
-
+    "companyId": "{{companyId}}",
+    "paymentMethod": "pay_now"
 }
+
+
+
+# make Payments
+###
+# track order 
+GET {{base_url}}/orders/{{orderId}}/track
+
+# confirm delivery
+# review company 
+

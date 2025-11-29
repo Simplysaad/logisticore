@@ -1,26 +1,23 @@
 import { Router } from "express";
 import {
+  confirmOrder,
   createOrder,
-  getOrders,
+  fetchPrices,
+  getOrderDetails,
+  orderCallback,
   trackOrder,
-  updateOrder,
 } from "../controllers/order.controller";
-import authMiddleware from "../middlewares/auth.middleware";
 
 const orderRouter = Router();
 
-// Get all orders
-orderRouter.get("/", authMiddleware, getOrders);
-
 // Create an order
-orderRouter.post("/", authMiddleware, createOrder);
+orderRouter.post("/", createOrder);
 
-// Track an order
-orderRouter.get("/:orderId", trackOrder);
+orderRouter.get("/:orderId", getOrderDetails);
+orderRouter.get("/:orderId/prices", fetchPrices);
+orderRouter.post("/:orderId/confirm", confirmOrder);
+orderRouter.get("/:orderId/track", trackOrder);
 
-// update an order
-orderRouter.post("/:orderId/", authMiddleware, updateOrder);
-
-// Review an Order
+orderRouter.get("/:orderId/callback", orderCallback);
 
 export default orderRouter;

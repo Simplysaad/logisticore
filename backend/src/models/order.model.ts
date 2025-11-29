@@ -2,15 +2,35 @@ import { Document, ObjectId, Schema, model } from "mongoose";
 export interface ICustomer {
   name: string;
   phoneNumber: string;
-  emailAddress: string;
+  email: string;
   address: string;
 }
 interface IOrder extends Document {
   _id: ObjectId;
   sender: ICustomer;
   receiver: ICustomer;
-  status: "pending" | "in_transit" | "delivered" | "cancelled" | "confirmed";
+  companyId?: ObjectId;
+  status:
+    | "initialized"
+    | "confirmed "
+    | "in_transit"
+    | "delivered"
+    | "cancelled"
+    | "failed";
   price: number;
+  weight: string;
+  distance: number;
+  instructions?: string;
+  preference?: {
+    [key: string]: any;
+  };
+  payment: {
+    status: "success" | "abandonned" | "failed" | "pending";
+    method: "pay_on_delivery" | "pay_now";
+    transactionId: string;
+    amount: number;
+    date: Date;
+  };
   description: string;
   createdAt: Date;
   updatedAt: Date;
@@ -25,28 +45,28 @@ interface IOrder extends Document {
 const orderSchema = new Schema<IOrder>(
   {
     sender: {
-      name: String,
-      phoneNumber: String,
-      emailAddress: String,
-      address: String,
+      name: { type: String, required: true },
+      phoneNumber: { type: String, required: true },
+      email: { type: String, required: true },
+      address: { type: String, required: true },
     },
     receiver: {
-      name: String,
-      phoneNumber: String,
-      emailAddress: String,
-      address: String,
+      name: { type: String, required: true },
+      phoneNumber: { type: String, required: true },
+      email: { type: String, required: true },
+      address: { type: String, required: true },
     },
     status: {
       type: String,
       enum: [
-        "pending",
+        "initialized",
         "confirmed",
         "in_transit",
         "delivered",
         "cancelled",
-        "confirmed",
+        "failed",
       ],
-      default: "pending",
+      default: "initialized",
     },
     trackingHistory: [
       {
@@ -54,29 +74,80 @@ const orderSchema = new Schema<IOrder>(
         timestamp: Date,
       },
     ],
-    price: { type: Number, required: true },
+
+    payment: {
+      status: {
+        type: String,
+        enum: ["success", "abandonned", "failed", "pending", "refunded"],
+        default: "pending",
+      },
+      method: {
+        type: String,
+        enum: ["pay_on_delivery", "pay_now"],
+        default: "pay_now",
+      },
+      date: Date,
+      transactionId: String,
+      amount: {
+        type: Number,
+        default: 0,
+      },
+    },
+    weight: { type: String },
+    distance: { type: Number },
+    price: { type: Number },
     description: { type: String },
+    companyId: { type: Schema.Types.ObjectId, ref: "Company" },
+    instructions: { type: String },
+    preference: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );
+// Query middleware for updates via findOneAndUpdate, updateOne, updateMany, etc.
+orderSchema.pre(
+  ["findOneAndUpdate", "updateOne", "updateMany"],
+  async function (next) {
+    const update: any = this.getUpdate();
+    const query = this.getQuery();
 
-orderSchema.pre("findOneAndUpdate", async function (next) {
-  const update = this.getUpdate() as any;
-  const query = this.getQuery() as any;
+    if (!update || typeof update !== "object") return next();
 
-  const doc = await this.model.findOne(query).exec();
+    // Handle updates that use $set etc:
+    const newStatus = update.status || (update.$set && update.$set.status);
+    if (!newStatus) return next();
 
-  const hasStatus = doc?.trackingHistory?.at(-1)?.status === update.status;
+    // Get current document before update
+    const doc = await this.model.findOne(query).exec();
+    if (!doc) return next();
 
-  if (hasStatus) return next();
+    const lastStatus = doc.trackingHistory?.at(-1)?.status;
 
-  if (!hasStatus && update && typeof update === "object" && update.status) {
-    if (!update.$push) update.$push = {};
+    // Only push new status if different
+    if (lastStatus !== newStatus) {
+      if (!update.$push) update.$push = {};
+      update.$push.trackingHistory = {
+        status: newStatus,
+        timestamp: new Date(),
+      };
+    }
 
-    update.$push.trackingHistory = {
-      status: update.status,
+    next();
+  }
+);
+
+orderSchema.pre("save", function (next) {
+  // if (!this.isModified("status")) {
+  //   return next();
+  // }
+
+  const lastStatus = this.trackingHistory?.at(-1)?.status;
+
+  if (!lastStatus || lastStatus !== this.status) {
+    this.trackingHistory = this.trackingHistory || [];
+    this.trackingHistory.push({
+      status: "initialized",
       timestamp: new Date(),
-    };
+    });
   }
 
   next();
