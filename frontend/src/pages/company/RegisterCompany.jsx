@@ -60,9 +60,10 @@ const DeliveryCompanyOnboarding = () => {
       bankDetails,
       pricingRule,
       authentication: {
-        emailAddress: "saadidris23@gmail.com",
+        emailAddress:
+          "saadidris23" + Math.floor(Math.random * 10) + "@gmail.com",
         password: "saad1234",
-        username:"simplysaad"
+        username: "simplysaad" + Math.floor(Math.random * 10)
       },
       contact
     };
