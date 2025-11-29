@@ -111,23 +111,15 @@ const OrderDetails = () => {
             </h3>
             <p>company: {order.companyId?.name}</p>
             <p>price: ${order.price?.toLocaleString()}</p>
-            {/* <ul className="list-disc list-inside">
-              {order.prices?.map(({ _id, name, price }) => (
-                <li key={_id} className="mb-1">
-                  {name}:{" "}
-                  <span className="font-medium">{price.toLocaleString()}</span>
-                </li>
-              ))}
-            </ul> */}
           </div>
-          <div>
+          {/* <div>
             <Link
               to={`/orders/${orderId}/track`}
               className="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
             >
               Track Order
             </Link>
-          </div>
+          </div> */}
           <div className="mt-6">
             <button
               onClick={() => setShowTrackingInline((prev) => !prev)}

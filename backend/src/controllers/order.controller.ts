@@ -35,24 +35,13 @@ export async function createOrder(
       description,
       instructions,
       weight,
-      distance,
+      distance
     });
-
-    // const newOrder = new Order({
-    //   sender,
-    //   receiver,
-    //   description,
-    //   instructions,
-    //   weight,
-    //   distance,
-    // });
-
-    // await newOrder.save();
 
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
-      data: { newOrder },
+      data: newOrder
     });
   } catch (err) {
     next(err);
@@ -75,7 +64,7 @@ export async function getOrderDetails(
     const currentOrder = await Order.findById(orderId)
       .populate({
         path: "companyId",
-        select: "name _id",
+        select: "name _id"
       })
       .select("weight distance createdAt price companyId");
     if (!currentOrder) {
@@ -87,7 +76,7 @@ export async function getOrderDetails(
     return res.status(200).json({
       success: true,
       message: "Order retrieved successfully",
-      data: currentOrder,
+      data: currentOrder
     });
   } catch (err) {
     next(err);
@@ -106,7 +95,7 @@ export async function fetchPrices(
     if (order?.status !== "initialized") {
       return res.status(200).json({
         success: false,
-        message: "order has been confirmed",
+        message: "order has been confirmed"
       });
     }
     const companies = await Company.find().select("pricingRule name _id");
@@ -115,7 +104,7 @@ export async function fetchPrices(
       return {
         price: calculatePrice(order, pricingRule),
         _id,
-        name,
+        name
       };
     });
 
@@ -124,8 +113,8 @@ export async function fetchPrices(
       message: "",
       data: {
         prices,
-        ...order?.toObject(),
-      },
+        ...order?.toObject()
+      }
     });
   } catch (err) {
     next(err);
@@ -154,7 +143,7 @@ export async function confirmOrder(
       Order.findOne({ _id: orderId }).select(
         "_id weight distance createdAt sender"
       ),
-      Company.findOne({ _id: companyId }).select("_id pricingRule name"),
+      Company.findOne({ _id: companyId }).select("_id pricingRule name")
     ]);
 
     if (!currentOrder) {
@@ -193,8 +182,8 @@ export async function confirmOrder(
           companyId: selectedCompany._id,
           price: finalPrice,
           "payment.method": paymentMethod,
-          status: "confirmed",
-        },
+          status: "confirmed"
+        }
       }
     );
 
@@ -206,8 +195,8 @@ export async function confirmOrder(
         orderId: currentOrder._id,
         companyId: selectedCompany._id,
         companyName: selectedCompany.name,
-        finalPrice,
-      },
+        finalPrice
+      }
     });
   } catch (err) {
     next(err);
@@ -228,10 +217,10 @@ export async function orderCallback(
     if (!response) {
       return res.status(400).json({
         success: false,
-        message: "Payment verification failed",
+        message: "Payment verification failed"
       });
     }
-
+    console.log("paystack response", response);
     if (response.status && response.data.status === "success") {
       await Order.updateOne(
         { _id: orderId },
@@ -241,10 +230,10 @@ export async function orderCallback(
               status: "success",
               date: new Date(),
               transactionId: response.data.reference,
-              amount: response.data.amount / 100,
+              amount: response.data.amount / 100
             },
-            status,
-          },
+            status
+          }
         }
       );
     }
@@ -274,7 +263,7 @@ export async function trackOrder(
     if (!orderId) {
       return res.status(400).json({
         success: false,
-        message: "Order ID is required",
+        message: "Order ID is required"
       });
     }
 
@@ -285,14 +274,14 @@ export async function trackOrder(
     if (!currentOrder) {
       return res.status(404).json({
         success: false,
-        message: "Order not found",
+        message: "Order not found"
       });
     }
 
     return res.status(200).json({
       success: true,
       message: "Order tracking data retrieved successfully",
-      data: currentOrder,
+      data: currentOrder
     });
   } catch (err) {
     next(err);

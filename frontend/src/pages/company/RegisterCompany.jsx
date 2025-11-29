@@ -33,7 +33,8 @@ const DeliveryCompanyOnboarding = () => {
   const [service, setService] = useState({
     serviceAreas: [],
     deliveryTypes: [],
-    vehicleTypes: []
+    vehicleTypes: [],
+    rating: 0
   });
   const [pricingRule, setPricingRule] = useState({
     base: 0,
@@ -60,7 +61,8 @@ const DeliveryCompanyOnboarding = () => {
       pricingRule,
       authentication: {
         emailAddress: "saadidris23@gmail.com",
-        password: "saad1234"
+        password: "saad1234",
+        username:"simplysaad"
       },
       contact
     };
