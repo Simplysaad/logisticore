@@ -43,7 +43,7 @@ const DeliveryCompanyOnboarding = () => {
     peakHoursSurcharge: 0,
     peakHours: [0]
   });
-  const [auth, setAuth] = useState({
+  const [authentication, setAuthentication] = useState({
     emailAddress: "",
     password: "",
     username: ""
