@@ -1,18 +1,33 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../utils/axios.util";
+import { Keyboard, Monitor, Star } from "lucide-react";
 
 // {
 //   logo, name, rating, price, deliveryTime, features, payment;
 // }
 
-const CompanyCard = () => {
+const CompanyCard = ({ company }) => {
   const [isLoading, setisLoading] = useState(false);
+  const { orderId } = useParams();
+
+  if (!company) {
+    console.log("company is not provided");
+  }
+
+  const {
+    logo,
+    name = "Lorem Ipsum",
+    rating = 0,
+    price,
+    _id: companyId,
+    paymentMethods
+  } = company || {};
   const handleConfirm = async (companyId) => {
     try {
       setisLoading(true);
       const { data: response } = await axiosInstance.post(
-        `/orders/${"orderId"}/confirm`,
+        `/orders/${orderId}/confirm`,
         {
           companyId,
           paymentMethod: "pay_now"
@@ -33,15 +48,19 @@ const CompanyCard = () => {
     <div className="border p-4 rounded  shadow ">
       <div id="companyInfo" className="flex gap-2 items-start">
         <div className="company-image overflow-hidden bg-gray-500 size-12 rounded-full  mask-circle">
+          {/* <img src={logo} alt="" /> */}
           <img src="/test.jpg" alt="" />
         </div>
         <div className="company-info  flex flex-col">
-          <p className="text-xl font-semibold text-green-950 p-0 m-0">
-            Lorem Ipsum
+          <p className="text-xl font-semibold text-green-950 p-0 m-0 capitalize">
+            {name}
           </p>
           <span className="flex gap-2 text-[.8rem] text-green-900/70">
-            <span>@ 5.0</span>
-            <span>25 Reviews</span>
+            <span className="flex gap-1 items-center">
+              <Star size={12} />
+              <span>{rating !== 0 ? rating?.toFixed(1) : "5.0"}</span>
+            </span>
+            <span>{Math.ceil(rating * 10)} Reviews</span>
           </span>
         </div>
       </div>
@@ -49,17 +68,31 @@ const CompanyCard = () => {
         <div className="flex flex-col justify-start gap-0">
           <span className="text-[0.7rem] text-green-700 p-0">Price</span>
           <span className="text-[1.2rem] font-semibold text-green-900 p-0">
-            $3,500
+            {"$" + price.toLocaleString()}
           </span>
         </div>
         <div className="flex flex-col justify-start gap-0">
           <span className="text-[0.7rem] text-green-700 p-0">
-            Estimated delivery time
+            Payment Methods
+          </span>
+          <span className="text-[1.2rem] flex gap-2 capitalize font-semibold text-green-900 p-0">
+            {paymentMethods.map((method) =>
+              method === "pay now" ? (
+                <Monitor size={22} />
+              ) : (
+                <Keyboard size={22} />
+              )
+            )}
+          </span>
+        </div>
+        {/* <div className="flex flex-col justify-start gap-0">
+          <span className="text-[0.7rem] text-green-700 p-0">
+            Est. delivery time
           </span>
           <span className="text-[1.2rem] font-semibold text-green-900 p-0">
             4 hours
           </span>
-        </div>
+        </div> */}
         {/* <div className="flex flex-col justify-start gap-0">
           <span className="text-[0.7rem] text-green-700 p-0">Price</span>
           <span className="text-[1.2rem] font-semibold text-green-900 p-0">
@@ -81,7 +114,7 @@ const CompanyCard = () => {
       </div>
       <div className="cta  my-6">
         <button
-          onClick={() => handleConfirm("")}
+          onClick={() => handleConfirm(companyId)}
           disabled={isLoading}
           className={`0 hover:bg-green-500   text-white px-4 py-2 rounded shadow ${
             isLoading ? "bg-green-500" : "bg-green-700"

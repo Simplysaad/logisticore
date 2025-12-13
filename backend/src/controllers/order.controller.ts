@@ -91,24 +91,34 @@ export async function fetchPrices(
   try {
     const { orderId } = req.params;
     const order = await Order.findOne({ _id: orderId });
-    // const allowesdStatuses = ["initialized", ""];
-    if (order?.status !== "initialized") {
+    // const allowesdStatuses = ["initialized", "confirmed"];
+    // if (order?.status !== "initialized") {
+    if (order?.status === "confirmed") {
       return res.status(200).json({
         success: false,
         message: "order has been confirmed"
       });
     }
 
-    const companies = await Company.find({
-      "sevice.serviceAreas": ["osun", "kogi"]
-      // "sevice.serviceAreas": [order.sender.state, order.receiver.state]
-    }).select("pricingRule name _id");
+    // {
+    //   logo, name, rating, price, deliveryTime, features, payment;
+    // }
 
-    const prices = companies.map(({ pricingRule, _id, name }, idx) => {
+    const companies = await Company.find({
+      // "sevice.serviceAreas": ["osun", "kogi"]
+      // "sevice.serviceAreas": [order.sender.state, order.receiver.state]
+    }).select("pricingRule name _id service");
+
+    console.log(companies);
+
+    const prices = companies.map(({ pricingRule, _id, name, service }, idx) => {
       return {
         price: calculatePrice(order, pricingRule),
         _id,
-        name
+        name,
+        rating: service?.rating,
+        logo: service.logo,
+        paymentMethods: ["pay now", "pay on delivery"]
       };
     });
 
@@ -137,7 +147,16 @@ export async function confirmOrder(
       paymentMethod: "pay_now" | "pay_on_delivery";
     };
 
-    if (!isValidObjectId(orderId) || !isValidObjectId(companyId)) {
+    // if (!isValidObjectId(orderId) || !isValidObjectId(companyId)) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Invalid Order ID or Company ID" });
+    // }
+
+    console.log("orderId", orderId);
+    console.log("companyId", companyId);
+
+    if (!orderId || !companyId) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid Order ID or Company ID" });
@@ -186,7 +205,7 @@ export async function confirmOrder(
           companyId: selectedCompany._id,
           price: finalPrice,
           "payment.method": paymentMethod,
-          status: "confirmed"
+          // status: "confirmed"
         }
       }
     );
@@ -213,7 +232,7 @@ export async function orderCallback(
   next: NextFunction
 ) {
   try {
-    const { reference, deliveryStatus: status } = req.query;
+    const { reference } = req.query;
     const { orderId } = req.params;
 
     const response = await verify(reference as string);
@@ -230,13 +249,13 @@ export async function orderCallback(
         { _id: orderId },
         {
           $set: {
+            status: "confirmed",
             payment: {
               status: "success",
               date: new Date(),
               transactionId: response.data.reference,
               amount: response.data.amount / 100
-            },
-            status
+            }
           }
         }
       );
@@ -292,5 +311,4 @@ export async function trackOrder(
   }
 }
 
-
-console.log("order.controller.ts loaded")
+console.log("order.controller.ts loaded");

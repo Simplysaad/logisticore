@@ -13,7 +13,7 @@ interface IOrder extends Document {
   companyId?: ObjectId;
   status:
     | "initialized"
-    | "confirmed "
+    | "confirmed"
     | "in_transit"
     | "delivered"
     | "cancelled"

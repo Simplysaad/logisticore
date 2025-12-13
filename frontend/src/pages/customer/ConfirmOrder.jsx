@@ -24,6 +24,7 @@ const OrderConfirm = () => {
         const { data: response } = await axiosInstance.get(
           `/orders/${orderId}/prices`
         );
+        console.log(response)
         if (response?.success) {
           setPrices(response.data?.prices || []);
           console.log("Fetched prices:", response);
@@ -65,7 +66,7 @@ const OrderConfirm = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="grid gap-4 grid-rows-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
           {prices.length !== 0 &&
-            prices.map((price, idx) => <CompanyCard  key={idx} />)}
+            prices.map((price, idx) => <CompanyCard company={price}  key={idx} />)}
         </div>
         {/* <table className="min-w-full bg-white rounded shadow-md">
           <thead className="bg-green-500 text-white">
