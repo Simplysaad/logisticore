@@ -35,3 +35,5 @@ companyRouter.post("/create", registerCompany);
 
 
 export default companyRouter
+
+console.log("company.route.ts loaded")

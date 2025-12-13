@@ -131,3 +131,6 @@ const CompanySchema = new Schema<ICompany>(
 const Company = model<ICompany>("Company", CompanySchema);
 
 export default Company;
+
+
+console.log("company.model.ts loaded")

@@ -34,3 +34,5 @@ export async function verify(reference: string) {
 
   return response;
 }
+
+console.log("paystack.service.ts loaded")

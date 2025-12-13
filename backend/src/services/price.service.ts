@@ -14,20 +14,11 @@ const allowedWeightRanges = [
   "15kg to 20kg",
   "above 20kg"
 ];
-// const weightConditions = [
-//   {
-//     name: "less than 5kg",
-//     max: 5,
-//     min: 0
-//   },
-//   {
-//     name: "5kg to 10kg",
-//     max: 10,
-//     min:
-//   }
-// ];
 
-export default function calculatePrice(order: any, pricingRule: IPricingRule) {
+export default function calculatePrice(
+  order: any,
+  pricingRule: IPricingRule,
+) {
   const { distance, weight, createdAt } = order;
   const { perKmRate, peakHoursSurcharge, peakHours, base, weightSurcharge } =
     pricingRule;
@@ -52,3 +43,6 @@ export default function calculatePrice(order: any, pricingRule: IPricingRule) {
   }
   return price;
 }
+
+
+console.log("price.service.ts loaded")

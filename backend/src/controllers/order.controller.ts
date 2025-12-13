@@ -98,7 +98,11 @@ export async function fetchPrices(
         message: "order has been confirmed"
       });
     }
-    const companies = await Company.find().select("pricingRule name _id");
+
+    const companies = await Company.find({
+      "sevice.serviceAreas": ["osun", "kogi"]
+      // "sevice.serviceAreas": [order.sender.state, order.receiver.state]
+    }).select("pricingRule name _id");
 
     const prices = companies.map(({ pricingRule, _id, name }, idx) => {
       return {
@@ -287,3 +291,6 @@ export async function trackOrder(
     next(err);
   }
 }
+
+
+console.log("order.controller.ts loaded")

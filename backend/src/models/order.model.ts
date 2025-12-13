@@ -4,6 +4,7 @@ export interface ICustomer {
   phoneNumber: string;
   email: string;
   address: string;
+  state: string;
 }
 interface IOrder extends Document {
   _id: ObjectId;
@@ -155,3 +156,6 @@ orderSchema.pre("save", function (next) {
 
 const Order = model<IOrder>("Order", orderSchema);
 export { IOrder, Order };
+
+
+console.log("order.model.ts loaded")

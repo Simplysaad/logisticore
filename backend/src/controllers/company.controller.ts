@@ -78,3 +78,6 @@ export async function companyLogin(
     next(err);
   }
 }
+
+
+console.log("company.controller.ts loaded")

@@ -21,3 +21,5 @@ orderRouter.get("/:orderId/track", trackOrder);
 orderRouter.get("/:orderId/callback", orderCallback);
 
 export default orderRouter;
+
+console.log("order.route.ts loaded")
