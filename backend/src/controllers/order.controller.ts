@@ -66,7 +66,7 @@ export async function getOrderDetails(
         path: "companyId",
         select: "name _id"
       })
-      .select("weight distance createdAt price companyId");
+      .select("weight distance createdAt price companyId sender receiver ");
     if (!currentOrder) {
       return res
         .status(404)
