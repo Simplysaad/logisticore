@@ -14,3 +14,5 @@ export default async function connectDB() {
     throw err;
   }
 }
+
+console.log("db.ts loaded")

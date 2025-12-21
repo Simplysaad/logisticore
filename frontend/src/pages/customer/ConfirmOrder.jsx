@@ -3,10 +3,11 @@ import {
   redirect,
   useLocation,
   useNavigate,
-  useParams,
+  useParams
 } from "react-router-dom";
 import axiosInstance from "../../utils/axios.util";
 import Layout from "./Layout";
+import CompanyCard from "../../components/CompanyCard";
 
 const OrderConfirm = () => {
   const [prices, setPrices] = useState([]);
@@ -23,6 +24,7 @@ const OrderConfirm = () => {
         const { data: response } = await axiosInstance.get(
           `/orders/${orderId}/prices`
         );
+        console.log(response);
         if (response?.success) {
           setPrices(response.data?.prices || []);
           console.log("Fetched prices:", response);
@@ -46,7 +48,7 @@ const OrderConfirm = () => {
         `/orders/${orderId}/confirm`,
         {
           companyId,
-          paymentMethod: "pay_now",
+          paymentMethod: "pay_now"
         }
       );
       console.log("Order confirmed:", response);
@@ -62,39 +64,12 @@ const OrderConfirm = () => {
   return (
     <Layout>
       <main className="container mx-auto px-4 py-8">
-        <table className="min-w-full bg-white rounded shadow-md">
-          <thead className="bg-green-500 text-white">
-            <tr>
-              <th className="text-left py-3 px-4">Company Name</th>
-              <th className="text-right py-3 px-4">Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prices.length ? (
-              prices.map(({ _id, name, price }) => (
-                <tr
-                  key={_id}
-                  className="cursor-pointer hover:bg-green-100"
-                  onClick={() => handleConfirm(_id)}
-                >
-                  <td className="py-3 px-4">{name}</td>
-                  <td className="py-3 px-4 text-right font-semibold">
-                    {price.toLocaleString()}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={2}
-                  className="text-center py-6 text-gray-500 italic"
-                >
-                  No pricing data available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <div className="grid gap-4 grid-rows-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
+          {prices.length !== 0 &&
+            prices.map((price, idx) => (
+              <CompanyCard company={price} key={idx} />
+            ))}
+        </div>
       </main>
     </Layout>
   );

@@ -1,5 +1,5 @@
 @base_url = http://localhost:5000
-@orderId = 690eac7e9c7c1b780899d173 
+@orderId = 693d1264a6d2f1fea20dfc3c 
 @companyId = 690d05db3d65bcadaaa0a187
 
 
@@ -12,15 +12,15 @@ Content-Type: application/json
         "name": "Jane Doe",
         "address": "123 Secondary St, City, Country",
         "phoneNumber": "+1234567890",
-        "emailAddress": "jane.doe@example.com"
+        "email": "jane.doe@example.com"
     },
     "receiver": {
         "name": "John Doe",
         "address": "123 Main St, City, Country",
         "phoneNumber": "+1234567890",
-        "emailAddress": "john.doe@example.com"
+        "email": "john.doe@example.com"
     },
-    "weight": 20,
+    "weight": "less than 5kg",
     "distance": 45,
     "description": "pink bag",
     "price": 2000
@@ -28,6 +28,9 @@ Content-Type: application/json
 
 ### 
 GET {{base_url}}/orders/{{orderId}}
+
+### 
+GET {{base_url}}/orders/{{orderId}}/prices
 
 
 ### # confirm Order 

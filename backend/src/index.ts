@@ -12,6 +12,7 @@ import errorhandler from "./middlewares/error.middleware";
 
 // import MongoStore from "connect-mongo";
 // import Session from "express-session";
+const startTime = Date.now();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,7 +21,7 @@ app.use(morgan("dev"));
 app.use(
   cors({
     credentials: true,
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL
   })
 );
 
@@ -47,12 +48,16 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "backend is up and running",
+    message: "backend is up and running"
   });
 });
 
 app.listen(port, () => {
-  connectDB();
+  connectDB().then(() => {
+    const endTime = Date.now();
+
+    console.log("duration", endTime - startTime);
+  });
   console.log(`Server is running at http://localhost:${port}`);
 });
 
@@ -62,8 +67,11 @@ app.use("/companies", companyRouter);
 app.use((req, res) => {
   return res.status(404).json({
     success: false,
-    message: `${req.originalUrl} route not found`,
+    message: `${req.originalUrl} route not found`
   });
 });
 
 app.use(errorhandler);
+
+
+console.log("index.ts loaded")
