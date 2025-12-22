@@ -240,7 +240,7 @@ const CompanyCard = ({
   return (
     <div
       className={`
-      bg-white/80 backdrop-blur-sm rounded-3xl shadow -lg border border-white/50 transition-all duration-300
+      bg-white/80 backdrop-blur-sm rounded shadow -lg border border-white/50 transition-all duration-300
       ${getVariantStyles()} ${className}
     `}
     >
@@ -369,11 +369,13 @@ const CompanyCard = ({
             onClick={handleBook}
             disabled={isBooking || loading}
             className={`
-              w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-bold text-lg shadow  -lg transition-all duration-300
+              w-full flex items-center justify-center gap-2 py-4 px-6 rounded font-bold text-lg shadow  -lg transition-all duration-300
               ${
                 isBooking || loading
-                  ? "bg-green-400 cursor-not-allowed shadow -md"
-                  : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 hover:shadow -xl hover:-translate-y-0.5 text-white shadow -xl"
+                  // ? "bg-green-400 cursor-not-allowed shadow"
+                  ? "bg-green-400 cursor-not-allowed shadow"
+                  // : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 hover:shadow -xl hover:-translate-y-0.5 text-white shadow -xl"
+                  : "bg-green-600 border hover:bg-emerald-700 hover:shadow hover:-translate-y-0.5 text-white shadow"
               }
             `}
           >

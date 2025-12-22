@@ -10,6 +10,7 @@ import orderRouter from "./routes/order.route";
 import companyRouter from "./routes/company.route";
 import errorhandler from "./middlewares/error.middleware";
 import adminRouter from "./routes/admin.route";
+// import insertMany from "./utils/insertMany";
 
 // import MongoStore from "connect-mongo";
 // import Session from "express-session";
@@ -74,6 +75,5 @@ app.use((req, res) => {
 });
 
 app.use(errorhandler);
-
 
 console.log("index.ts loaded")
