@@ -33,7 +33,7 @@ const OrderDetails = () => {
   }, [orderId]);
 
   useEffect(() => {
-      fetchTrackingHistory();
+    fetchTrackingHistory();
   }, [orderId]);
 
   const fetchOrderDetails = async () => {
@@ -130,10 +130,10 @@ const OrderDetails = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50 py-8">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto md:px-6 px-2">
           {/* Header */}
           <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow -xl border border-white/50 p-8 mb-8">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+            <div className="flex not-md:flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="flex-1">
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-500 rounded-3xl shadow -lg">
@@ -165,7 +165,7 @@ const OrderDetails = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Order Summary Card */}
-            <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow xl border border-white/50 p-8 order-1">
+            <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow xl border border-white/50 px-8 py-8 order-1">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <FileText className="w-7 h-7 mr-3 text-green-500" />
                 Order Summary
@@ -234,7 +234,11 @@ const OrderDetails = () => {
                   </div>
                 )} */}
 
-                <CompanyCard company={order.companyId} booked orderPrice={order.price} />
+                <CompanyCard
+                  company={order.companyId}
+                  booked
+                  orderPrice={order.price}
+                />
               </div>
             </div>
 
@@ -245,88 +249,33 @@ const OrderDetails = () => {
                   <Map className="w-7 h-7 mr-3 text-blue-500" />
                   Delivery Tracking
                 </h2>
-               
               </div>
 
               <div className="space-y-4">
-                {/* {trackingHistory.length === 0 ? (
-                    <div className="text-center py-12">
-                      <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500 text-lg font-medium">
-                        No tracking updates yet
-                      </p>
-                      <p className="text-gray-400">
-                        Your delivery partner will update you soon
-                      </p>
-                    </div>
+                <div className="mt-6">
+                  <h3 className="text-green-600 font-semibold mb-4">
+                    Tracking History
+                  </h3>
+                  {trackingHistory.length === 0 ? (
+                    <p className="italic text-gray-500">
+                      No tracking history available.
+                    </p>
                   ) : (
-                    <div className="relative">
-                      <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-blue-600 transform -translate-x-1/2"></div>
-                      {trackingHistory.map(({ status, timestamp }, idx) => (
-                        <div
-                          key={idx}
-                          className="relative flex items-center justify-center"
-                        >
-                          <div
-                            className={`absolute w-5 h-5 rounded-full shadow lg z-10 ${getStatusColor(
-                              status
-                            )} border-4 border-white flex items-center justify-center`}
-                          >
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
-                          </div>
-                          <div
-                            className={`bg-white p-6 rounded-2xl shadow lg w-full max-w-md mx-auto ${
-                              idx % 2 === 0 ? "order-1" : "order-2"
-                            }`}
-                          >
-                            <p
-                              className={`font-bold text-lg mb-1 ${
-                                getStatusColor(status).includes("green")
-                                  ? "text-green-800"
-                                  : getStatusColor(status).includes("red")
-                                  ? "text-red-800"
-                                  : "text-gray-800"
-                              }`}
-                            >
-                              {status}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {new Date(timestamp).toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
+                    <ol className="border-l-4 border-green-500 pl-6 space-y-4">
+                      {trackingHistory?.map(({ status, timestamp }, idx) => (
+                        <li key={idx} className="relative">
+                          <span className="absolute -left-5 top-1 bg-green-500 rounded-full w-4 h-4"></span>
+                          <p className="font-medium capitalize text-green-700">
+                            {status}
+                          </p>
+                          <time className="block text-sm text-gray-600">
+                            {new Date(timestamp).toLocaleString()}
+                          </time>
+                        </li>
                       ))}
-
-                      
-                    </div>
-                  )} */}
-
-                { (
-                  <div className="mt-6">
-                    <h3 className="text-green-600 font-semibold mb-4">
-                      Tracking History
-                    </h3>
-                    {/* {trackingHistory.length === 0 ? (
-                      <p className="italic text-gray-500">
-                        No tracking history available.
-                      </p>
-                    ) : ( */}
-                      <ol className="border-l-4 border-green-500 pl-6 space-y-4">
-                        {trackingHistory?.map(({ status, timestamp }, idx) => (
-                          <li key={idx} className="relative">
-                            <span className="absolute -left-5 top-1 bg-green-500 rounded-full w-4 h-4"></span>
-                            <p className="font-medium capitalize text-green-700">
-                              {status}
-                            </p>
-                            <time className="block text-sm text-gray-600">
-                              {new Date(timestamp).toLocaleString()}
-                            </time>
-                          </li>
-                        ))}
-                      </ol>
-                    {/* )} */}
-                  </div>
-                )}
+                    </ol>
+                  )}
+                </div>
               </div>
             </div>
           </div>
