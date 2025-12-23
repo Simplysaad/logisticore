@@ -1,0 +1,9 @@
+﻿To Companies: 
+* when they register,
+* when they recieve an order
+* when they recieve payments 
+
+To Sender and receiver 
+* when they place an order (or they are made the receiver of an order)
+* when they make a payment
+* when the status of an order changes (i.e confirmed --> delivered)

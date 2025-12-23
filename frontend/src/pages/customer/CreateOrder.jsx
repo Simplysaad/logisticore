@@ -81,7 +81,7 @@ const CreateOrder = () => {
 
   return (
     <Layout>
-      <main className="flex-1 p-8 max-w-4xl mx-auto w-full">
+      <main className="flex-1 p-4 md:p-8  max-w-4xl mx-auto w-full">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
           Start Your Delivery
         </h2>
@@ -93,7 +93,7 @@ const CreateOrder = () => {
         <form
           id="orderInit"
           onSubmit={handleSubmit}
-          className="bg-white rounded-lg shadow-md p-8 space-y-8"
+          className="bg-white rounded-lg shadow-md p-4 md:p-8 space-y-8"
         >
           {/* Sender Details */}
           <fieldset className="border border-gray-200 rounded-lg p-6">

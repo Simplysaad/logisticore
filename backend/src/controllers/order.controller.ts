@@ -109,7 +109,7 @@ export async function fetchPrices(
       // "sevice.serviceAreas": [order.sender.state, order.receiver.state]
     }).select("pricingRule name _id service");
 
-    console.log(companies);
+    // console.log(companies);
 
     const prices = companies.map(({ pricingRule, _id, name, service }, idx) => {
       return {
