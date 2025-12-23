@@ -177,7 +177,7 @@ const CompanyCard = ({
     deliveryTime,
     features = [],
     paymentMethods = [],
-    serviceAreas = [],
+    // serviceAreas = [],
     _id: companyId
   } = company;
 

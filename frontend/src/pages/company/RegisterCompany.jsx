@@ -43,11 +43,11 @@ const DeliveryCompanyOnboarding = () => {
     peakHoursSurcharge: 0,
     peakHours: [0]
   });
-  const [authentication, setAuthentication] = useState({
-    emailAddress: "",
-    password: "",
-    username: ""
-  });
+  // const [authentication, setAuthentication] = useState({
+  //   emailAddress: "",
+  //   password: "",
+  //   username: ""
+  // });
 
   const [isLoading, setIsLoading] = useState(false);
 
