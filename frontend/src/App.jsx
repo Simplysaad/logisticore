@@ -17,6 +17,7 @@ const App = () => {
           <Route index element={<Home />} />
           {/* <Route index element={<CreateOrder />} /> */}
           <Route path="/orders/create/" element={<CreateOrder />} />
+          <Route path="/orders/new/" element={<CreateOrder />} />
           <Route path="/orders/:orderId/" element={<OrderDetails />} />
           <Route path="/orders/:orderId/confirm" element={<ConfirmOrder />} />
           <Route path="/orders/:orderId/track" element={<TrackOrder />} />

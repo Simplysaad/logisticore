@@ -1,7 +1,19 @@
 import React, { useState } from "react";
-import { 
-  Package, MapPin, Clock, Smartphone, Truck, Star, Users, DollarSign, 
-  CheckCircle, Bike, CarFront, Shield, Award, Play 
+import {
+  Package,
+  MapPin,
+  Clock,
+  Smartphone,
+  Truck,
+  Star,
+  Users,
+  DollarSign,
+  CheckCircle,
+  Bike,
+  CarFront,
+  Shield,
+  Award,
+  Play
 } from "lucide-react";
 
 const Homepage = () => {
@@ -20,7 +32,7 @@ const Homepage = () => {
       subtitle: "Reliable delivery at your fingertips",
       features: [
         "Nearest rider matched instantly",
-        "Live GPS tracking", 
+        "Live GPS tracking",
         "Paystack or cash on delivery",
         "18 min average delivery time"
       ]
@@ -60,24 +72,32 @@ const Homepage = () => {
             <div className="lg:pt-8 xl:pt-0 space-y-8">
               <div className="inline-flex items-center gap-2 px-6 py-2 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/50">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-sm font-semibold text-green-900">LIVE IN LAGOS</span>
+                <span className="text-sm font-semibold text-green-900">
+                  LIVE IN LAGOS
+                </span>
               </div>
-              
+
               <div className="space-y-6">
                 <h1 className="text-5xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-green-900 bg-clip-text text-transparent leading-tight">
                   Nigeria's Uber
                   <br />
-                  <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">for Deliveries</span>
+                  <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    for Deliveries
+                  </span>
                 </h1>
                 <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed max-w-lg">
-                  Skip the 3-hour wait. Get your package delivered in 
-                  <span className="font-bold text-green-600"> 18 minutes</span> by the nearest verified rider.
+                  Skip the 3-hour wait. Get your package delivered in
+                  <span className="font-bold text-green-600">
+                    {" "}
+                    18 minutes
+                  </span>{" "}
+                  by the nearest verified rider.
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <a
-                  href="#send-package"
+                  href="/orders"
                   className="group relative bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-6 px-10 rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 text-lg flex items-center gap-3"
                 >
                   <Package className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -112,9 +132,14 @@ const Homepage = () => {
                   {stats.map((stat, idx) => {
                     const Icon = stat.icon;
                     return (
-                      <div key={idx} className="group text-center p-6 rounded-2xl hover:bg-white/50 transition-all">
+                      <div
+                        key={idx}
+                        className="group text-center p-6 rounded-2xl hover:bg-white/50 transition-all"
+                      >
                         <Icon className="w-12 h-12 mx-auto mb-3 text-green-600 group-hover:scale-110 transition-transform" />
-                        <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
+                        <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+                          {stat.value}
+                        </p>
                         <p className="text-sm text-gray-600">{stat.label}</p>
                       </div>
                     );
@@ -154,7 +179,8 @@ const Homepage = () => {
             Perfect for Everyone
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Whether you're sending packages, delivering for cash, or scaling your business.
+            Whether you're sending packages, delivering for cash, or scaling
+            your business.
           </p>
         </div>
 
@@ -190,12 +216,17 @@ const Homepage = () => {
                 {currentAudience.subtitle}
               </p>
             </div>
-            
+
             <ul className="space-y-4 text-lg">
               {currentAudience.features.map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                <li
+                  key={idx}
+                  className="flex items-start gap-4 p-4 bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-xl transition-all"
+                >
                   <div className="w-8 h-8 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-white font-bold text-sm">{idx + 1}</span>
+                    <span className="text-white font-bold text-sm">
+                      {idx + 1}
+                    </span>
                   </div>
                   <span className="font-medium text-gray-900">{feature}</span>
                 </li>
@@ -207,7 +238,11 @@ const Homepage = () => {
                 href={`#${activeTab}`}
                 className="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-5 px-10 rounded-3xl shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 text-lg"
               >
-                {activeTab === "customer" ? "Send Package Now" : activeTab === "rider" ? "Start Earning" : "Get Business API"}
+                {activeTab === "customer"
+                  ? "Send Package Now"
+                  : activeTab === "rider"
+                  ? "Start Earning"
+                  : "Get Business API"}
                 <Truck className="w-5 h-5" />
               </a>
             </div>
@@ -220,21 +255,27 @@ const Homepage = () => {
                   <div className="w-24 h-24 bg-white/50 rounded-3xl mx-auto mb-6 flex items-center justify-center">
                     <Package className="w-12 h-12 text-green-600" />
                   </div>
-                  <h4 className="text-2xl font-bold text-gray-900 mb-3">Customer</h4>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-3">
+                    Customer
+                  </h4>
                   <p className="text-gray-600">Track every delivery live</p>
                 </div>
                 <div className="text-center">
                   <div className="w-24 h-24 bg-white/50 rounded-3xl mx-auto mb-6 flex items-center justify-center">
                     <Bike className="w-12 h-12 text-emerald-600" />
                   </div>
-                  <h4 className="text-2xl font-bold text-gray-900 mb-3">Rider</h4>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-3">
+                    Rider
+                  </h4>
                   <p className="text-gray-600">Cash out weekly</p>
                 </div>
                 <div className="text-center">
                   <div className="w-24 h-24 bg-white/50 rounded-3xl mx-auto mb-6 flex items-center justify-center">
                     <Truck className="w-12 h-12 text-green-600" />
                   </div>
-                  <h4 className="text-2xl font-bold text-gray-900 mb-3">Business</h4>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-3">
+                    Business
+                  </h4>
                   <p className="text-gray-600">API + Analytics</p>
                 </div>
               </div>
@@ -277,13 +318,18 @@ const Homepage = () => {
               desc: "No hidden fees. Paystack secured"
             }
           ].map(({ icon: Icon, title, desc }, idx) => (
-            <div key={idx} className="group relative p-10 rounded-3xl bg-white/70 backdrop-blur-xl hover:bg-white hover:shadow-2xl hover:-translate-y-4 transition-all duration-500 border border-white/50">
+            <div
+              key={idx}
+              className="group relative p-10 rounded-3xl bg-white/70 backdrop-blur-xl hover:bg-white hover:shadow-2xl hover:-translate-y-4 transition-all duration-500 border border-white/50"
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
                   <Icon className="w-10 h-10 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{title}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  {title}
+                </h3>
                 <p className="text-gray-600 leading-relaxed">{desc}</p>
               </div>
             </div>
@@ -295,20 +341,27 @@ const Homepage = () => {
       <section className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-12">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="inline-flex items-center gap-3 px-8 py-4 bg-white/20 backdrop-blur-xl rounded-3xl mb-8">
-            <Award className="w-6 h-6" />
-            <span className="text-xl font-bold">MTS 2.0 Hackathon Finalist</span>
+            {/* <Award className="w-6 h-6" />
+            <span className="text-xl font-bold">MTS 2.0 Hackathon Finalist</span> */}
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
             Built Live for Nigeria
           </h2>
           <p className="text-xl opacity-90 mb-12 max-w-2xl mx-auto">
-            From hackathon MVP to Lagos streets. Join Nigeria's fastest delivery revolution.
+            From hackathon MVP to Lagos streets. Join Nigeria's fastest delivery
+            revolution.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <a href="#demo" className="bg-white text-green-600 font-bold py-4 px-12 rounded-3xl hover:bg-gray-50 transition-all shadow-xl">
+            <a
+              href="#demo"
+              className="bg-white text-green-600 font-bold py-4 px-12 rounded-3xl hover:bg-gray-50 transition-all shadow-xl"
+            >
               Live Demo
             </a>
-            <a href="#github" className="border-2 border-white/50 text-white font-bold py-4 px-12 rounded-3xl hover:bg-white/10 backdrop-blur-xl transition-all">
+            <a
+              href="#github"
+              className="border-2 border-white/50 text-white font-bold py-4 px-12 rounded-3xl hover:bg-white/10 backdrop-blur-xl transition-all"
+            >
               View Code
             </a>
           </div>
@@ -323,9 +376,14 @@ const Homepage = () => {
               <h4 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent mb-6">
                 Logisticore
               </h4>
-              <p className="text-gray-400 mb-6">Nigeria's fastest delivery platform. 18 minutes or less.</p>
+              <p className="text-gray-400 mb-6">
+                Nigeria's fastest delivery platform. 18 minutes or less.
+              </p>
               <div className="flex space-x-4">
-                <a href="#" className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center hover:bg-white/30 transition-all">
+                <a
+                  href="#"
+                  className="w-10 h-10 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center hover:bg-white/30 transition-all"
+                >
                   <Package className="w-5 h-5" />
                 </a>
               </div>
@@ -333,31 +391,70 @@ const Homepage = () => {
             <div>
               <h5 className="font-bold text-white mb-6">Customers</h5>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Track Order</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Send Package</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Track Order
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Send Package
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Help Center
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h5 className="font-bold text-white mb-6">Riders</h5>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Sign Up</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Earnings</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Requirements</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Sign Up
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Earnings
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Requirements
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h5 className="font-bold text-white mb-6">Company</h5>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">API Docs</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    API Docs
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Careers
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-white/10 mt-16 pt-12 text-center text-gray-500 text-sm">
-            <p>&copy; {new Date().getFullYear()} Logisticore. Built in Nigeria for Nigerians.</p>
+            <p>
+              &copy; {new Date().getFullYear()} Logisticore. Built in Nigeria
+              for Nigerians.
+            </p>
           </div>
         </div>
       </footer>
