@@ -14,8 +14,8 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          {/* <Route index element={<Home />} /> */}
-          <Route index element={<CreateOrder />} />
+          <Route index element={<Home />} />
+          {/* <Route index element={<CreateOrder />} /> */}
           <Route path="/orders/create/" element={<CreateOrder />} />
           <Route path="/orders/:orderId/" element={<OrderDetails />} />
           <Route path="/orders/:orderId/confirm" element={<ConfirmOrder />} />
